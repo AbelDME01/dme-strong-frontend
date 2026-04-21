@@ -1,0 +1,78 @@
+<div class="home">
+  <!-- Header -->
+  <div class="home__header">
+    <div>
+      <div class="home__date">Martes, 21 abr</div>
+      <h1 class="home__greeting">Hola, Rubén</h1>
+    </div>
+    <div class="home__bell">
+      <ds-icon name="bell" [size]="20" color="var(--dme-text)"/>
+      <div class="home__bell-dot"></div>
+    </div>
+  </div>
+
+  <!-- Today's Workout Hero -->
+  <div class="home__workout-hero">
+    <div class="home__workout-glow"></div>
+    <div class="home__workout-badges">
+      <ds-badge tone="mint">HOY</ds-badge>
+      <ds-badge tone="neutral"><ds-icon name="clock" [size]="10"/> 52 MIN</ds-badge>
+    </div>
+    <h2 class="home__workout-title">Empuje · Pecho y tríceps</h2>
+    <p class="home__workout-meta">6 ejercicios · 22 series</p>
+    <div class="home__workout-actions">
+      <ds-button size="md" icon="play" [full]="false">Empezar entreno</ds-button>
+      <div class="home__workout-more">
+        <ds-icon name="more" [size]="20" color="var(--dme-text)"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="home__stats">
+    <ds-card *ngFor="let s of stats" [raised]="true" [pad]="14">
+      <div class="home__stat-label">{{ s.label }}</div>
+      <div class="home__stat-value">{{ s.value }}</div>
+      <div class="home__stat-trend">{{ s.trend }}</div>
+    </ds-card>
+  </div>
+
+  <!-- Week Strip -->
+  <div class="home__week">
+    <div class="home__week-header">
+      <span class="home__week-title">Esta semana</span>
+      <span class="home__week-link">Ver todo</span>
+    </div>
+    <div class="home__week-days">
+      <div *ngFor="let d of days; let i = index"
+           class="home__day"
+           [class.home__day--done]="i < 2"
+           [class.home__day--today]="i === 2">
+        <span class="home__day-letter">{{ d }}</span>
+        <span class="home__day-num">{{ dayNumbers[i] }}</span>
+        <ds-icon *ngIf="i < 2" name="check" [size]="10" color="var(--dme-mint)"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent PRs -->
+  <div class="home__prs">
+    <div class="home__prs-header">
+      <span class="home__prs-title">Récords recientes</span>
+    </div>
+    <ds-card [pad]="0">
+      <div *ngFor="let pr of prs; let last = last" class="home__pr-item" [class.home__pr-item--last]="last">
+        <div class="home__pr-icon">
+          <ds-icon name="trophy" [size]="18" color="var(--dme-amber)"/>
+        </div>
+        <div class="home__pr-info">
+          <div class="home__pr-name">{{ pr.exercise }}</div>
+          <div class="home__pr-date">{{ pr.date }}</div>
+        </div>
+        <div class="home__pr-weight">{{ pr.weight }}</div>
+      </div>
+    </ds-card>
+  </div>
+</div>
+
+<ds-tab-bar active="home"/>
