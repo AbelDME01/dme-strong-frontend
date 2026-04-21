@@ -7,11 +7,13 @@
   </div>
 
   <div class="routines__filters">
-    <div *ngFor="let f of filters; let i = index"
-         class="routines__chip"
-         [class.routines__chip--active]="i === activeFilter"
-         (click)="activeFilter = i">
-      {{ f }}
+    <div class="routines__segment">
+      <div *ngFor="let f of filters; let i = index"
+           class="routines__seg-item"
+           [class.routines__seg-item--active]="i === activeFilter"
+           (click)="activeFilter = i">
+        {{ f }}
+      </div>
     </div>
   </div>
 

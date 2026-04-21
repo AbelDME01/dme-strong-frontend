@@ -30,7 +30,7 @@ interface Tab {
   `,
   styles: [`
     .ds-tabbar {
-      position: absolute;
+      position: fixed;
       left: 14px;
       right: 14px;
       bottom: 28px;

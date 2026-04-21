@@ -33,31 +33,36 @@
 
   &__filters {
     margin-top: 18px;
-    display: flex;
-    gap: 8px;
     overflow-x: auto;
-    padding-bottom: 4px;
     &::-webkit-scrollbar { display: none; }
   }
 
-  &__chip {
-    height: 34px;
-    padding: 0 14px;
-    border-radius: 17px;
+  &__segment {
+    display: inline-flex;
+    background: var(--dme-surface2);
+    border-radius: 14px;
+    padding: 4px;
+    gap: 2px;
+    border: 1px solid var(--dme-border);
+    min-width: max-content;
+  }
+
+  &__seg-item {
+    height: 32px;
+    padding: 0 16px;
+    border-radius: 10px;
     white-space: nowrap;
     display: flex;
     align-items: center;
-    background: var(--dme-surface2);
     color: var(--dme-text-dim);
-    border: 1px solid var(--dme-border);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
+    transition: background 0.15s, color 0.15s;
 
     &--active {
-      background: var(--dme-text);
-      color: var(--dme-bg);
-      border: none;
+      background: var(--dme-surface3);
+      color: var(--dme-text);
     }
   }
 
