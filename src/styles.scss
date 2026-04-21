@@ -1,0 +1,32 @@
+@use 'theme/variables';
+
+html, body {
+  height: 100%;
+  background: var(--dme-bg);
+  color: var(--dme-text);
+  font-family: var(--dme-font);
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: var(--dme-mint);
+  text-decoration: none;
+}
+
+.mono {
+  font-family: var(--dme-mono);
+}
+
+// Phone shell wrapper
+.phone-shell {
+  width: 390px;
+  height: 800px;
+  border-radius: 46px;
+  overflow: hidden;
+  position: relative;
+  background: var(--dme-bg);
+  color: var(--dme-text);
+  font-family: var(--dme-font);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
