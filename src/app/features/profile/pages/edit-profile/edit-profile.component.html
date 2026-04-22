@@ -1,0 +1,53 @@
+<div class="edit-profile">
+  <div class="edit-profile__header">
+    <a routerLink="/profile" class="edit-profile__back">
+      <ds-icon name="chevronL" [size]="18" color="var(--dme-text)"/>
+    </a>
+    <div class="edit-profile__title">Editar perfil</div>
+    <span class="edit-profile__save">Guardar</span>
+  </div>
+
+  <!-- Avatar -->
+  <div class="edit-profile__avatar-section">
+    <div class="edit-profile__avatar">
+      R
+      <div class="edit-profile__avatar-edit">
+        <ds-icon name="edit" [size]="14" color="#06201B"/>
+      </div>
+    </div>
+    <div class="edit-profile__avatar-cta">Cambiar foto</div>
+  </div>
+
+  <!-- Form -->
+  <div class="edit-profile__form">
+    <ds-input label="Nombre" value="Rubén García" icon="user"/>
+    <ds-input label="Email" value="ruben@dme.app" icon="note"/>
+
+    <div class="edit-profile__row">
+      <ds-input label="Peso (kg)" value="78.4" icon="weight"/>
+      <ds-input label="Altura (cm)" value="178" icon="ruler"/>
+    </div>
+
+    <!-- Goal Selector -->
+    <div>
+      <div class="edit-profile__selector-label">Objetivo</div>
+      <div class="edit-profile__goals">
+        <div *ngFor="let g of goals; let i = index"
+             class="edit-profile__goal"
+             [class.edit-profile__goal--active]="i === selectedGoal"
+             (click)="selectedGoal = i">{{ g }}</div>
+      </div>
+    </div>
+
+    <!-- Experience Selector -->
+    <div>
+      <div class="edit-profile__selector-label">Experiencia</div>
+      <div class="edit-profile__experience">
+        <div *ngFor="let e of experience; let i = index"
+             class="edit-profile__exp-btn"
+             [class.edit-profile__exp-btn--active]="i === selectedExp"
+             (click)="selectedExp = i">{{ e }}</div>
+      </div>
+    </div>
+  </div>
+</div>

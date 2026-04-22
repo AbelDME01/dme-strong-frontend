@@ -1,0 +1,45 @@
+<div class="builder">
+  <div class="builder__header">
+    <a routerLink="/routines" class="builder__close">
+      <ds-icon name="close" [size]="18" color="var(--dme-text)"/>
+    </a>
+    <h2 class="builder__title">Nueva rutina</h2>
+    <span class="builder__save">Guardar</span>
+  </div>
+
+  <div class="builder__name-section">
+    <div class="builder__name-label">Nombre</div>
+    <div class="builder__name">Empuje · Pecho y tríceps</div>
+  </div>
+
+  <div class="builder__tags">
+    <ds-badge tone="mint">Hipertrofia</ds-badge>
+    <ds-badge tone="neutral">PPL</ds-badge>
+    <ds-badge tone="neutral"><ds-icon name="plus" [size]="10"/> Etiqueta</ds-badge>
+  </div>
+
+  <div class="builder__exercises-header">
+    <span class="builder__exercises-title">
+      Ejercicios <span class="builder__exercises-count">· {{ exercises.length }}</span>
+    </span>
+    <span class="builder__add">
+      <ds-icon name="plus" [size]="14" color="var(--dme-mint)"/> Añadir
+    </span>
+  </div>
+
+  <div class="builder__list">
+    <div *ngFor="let e of exercises; let i = index" class="builder__exercise">
+      <span class="builder__exercise-num">{{ i + 1 }}</span>
+      <div class="builder__exercise-icon">
+        <ds-icon name="dumbbell" [size]="18" color="var(--dme-mint)"/>
+      </div>
+      <div class="builder__exercise-info">
+        <div class="builder__exercise-name">{{ e.name }}</div>
+        <div class="builder__exercise-meta">{{ e.sets }} series · {{ e.muscle }}</div>
+      </div>
+      <ds-icon name="sort" [size]="18" color="var(--dme-text-mute)"/>
+    </div>
+  </div>
+
+  <ds-button [full]="true" size="lg" icon="play" style="margin-top: 14px">Empezar ahora</ds-button>
+</div>

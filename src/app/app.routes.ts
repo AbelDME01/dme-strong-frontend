@@ -39,6 +39,7 @@ export const routes: Routes = [
       { path: 'edit', loadComponent: () => import('./features/profile/pages/edit-profile/edit-profile.component').then(m => m.EditProfileComponent) },
     ],
   },
+  { path: 'stats', redirectTo: '/history', pathMatch: 'full' },
   { path: 'dashboard', loadComponent: () => import('./features/dashboard/pages/web-dashboard/web-dashboard.component').then(m => m.WebDashboardComponent) },
   { path: '**', redirectTo: '/auth/login' },
 ];

@@ -1,0 +1,141 @@
+.routines {
+  padding: 62px 20px 110px;
+  background: var(--dme-bg);
+  min-height: 100dvh;
+  position: relative;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+    margin: 0;
+    color: var(--dme-text);
+  }
+
+  &__fab {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: var(--dme-mint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 229, 160, 0.3);
+    cursor: pointer;
+  }
+
+  &__filters {
+    margin-top: 18px;
+    overflow-x: auto;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__segment {
+    display: inline-flex;
+    background: var(--dme-surface2);
+    border-radius: 14px;
+    padding: 4px;
+    gap: 2px;
+    border: 1px solid var(--dme-border);
+    min-width: max-content;
+  }
+
+  &__seg-item {
+    height: 32px;
+    padding: 0 16px;
+    border-radius: 10px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    color: var(--dme-text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    &--active {
+      background: var(--dme-surface3);
+      color: var(--dme-text);
+    }
+  }
+
+  &__list {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__info { flex: 1; min-width: 0; }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+
+  &__last {
+    font-size: 11px;
+    color: var(--dme-text-mute);
+  }
+
+  &__name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--dme-text);
+  }
+
+  &__details {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--dme-text-dim);
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  &__play {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--dme-surface3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+}

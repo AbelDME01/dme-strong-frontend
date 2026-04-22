@@ -1,0 +1,38 @@
+<div class="login">
+  <div class="login__logo">
+    <ds-logo [size]="36"/>
+  </div>
+
+  <div class="login__hero">
+    <h1 class="login__title">Bienvenido<br><span class="login__accent">de vuelta</span></h1>
+    <p class="login__subtitle">Entra para seguir tu progreso.</p>
+  </div>
+
+  <div class="login__form">
+    <ds-input label="Email" value="ruben@dme.app" icon="user"/>
+    <ds-input label="Contraseña" value="••••••••••" icon="settings">
+      <span slot="right" class="login__show">Mostrar</span>
+    </ds-input>
+  </div>
+
+  <div class="login__forgot">¿Olvidaste tu contraseña?</div>
+
+  <div class="login__actions">
+    <ds-button [full]="true" size="lg" iconRight="chevron">Iniciar sesión</ds-button>
+
+    <div class="login__divider">
+      <div class="login__divider-line"></div>
+      <span>o continúa con</span>
+      <div class="login__divider-line"></div>
+    </div>
+
+    <div class="login__social">
+      <ds-button variant="secondary" [full]="true" icon="apple">Apple</ds-button>
+      <ds-button variant="secondary" [full]="true" icon="google">Google</ds-button>
+    </div>
+
+    <p class="login__register">
+      ¿Nuevo aquí? <a routerLink="/auth/register" class="login__register-link">Crea una cuenta</a>
+    </p>
+  </div>
+</div>
