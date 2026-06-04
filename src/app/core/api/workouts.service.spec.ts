@@ -54,4 +54,43 @@ describe('WorkoutsService', () => {
     expect(req.request.body).toEqual({ name: 'Push' });
     req.flush({ id: 'w1', name: 'Push' });
   });
+
+  it('update PATCHes the workout (e.g. mark finished)', () => {
+    const finishedAt = '2026-06-04T10:00:00.000Z';
+    service.update('w1', { finishedAt }).subscribe();
+    const req = httpMock.expectOne(`${base}/w1`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ finishedAt });
+    req.flush({ id: 'w1' });
+  });
+
+  it('remove DELETEs the workout', () => {
+    service.remove('w1').subscribe();
+    const req = httpMock.expectOne(`${base}/w1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
+
+  it('addSet POSTs a set to the workout', () => {
+    service.addSet('w1', { exerciseId: 'ex1', reps: 10, weightKg: 80 }).subscribe();
+    const req = httpMock.expectOne(`${base}/w1/sets`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ exerciseId: 'ex1', reps: 10, weightKg: 80 });
+    req.flush({ id: 's1' });
+  });
+
+  it('updateSet PATCHes a specific set', () => {
+    service.updateSet('w1', 's1', { reps: 8 }).subscribe();
+    const req = httpMock.expectOne(`${base}/w1/sets/s1`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ reps: 8 });
+    req.flush({ id: 's1' });
+  });
+
+  it('removeSet DELETEs a specific set', () => {
+    service.removeSet('w1', 's1').subscribe();
+    const req = httpMock.expectOne(`${base}/w1/sets/s1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
 });

@@ -3,11 +3,39 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { Workout } from './models';
+import { Workout, WorkoutSet } from './models';
 
 interface PaginatedWorkouts {
   data: Workout[];
   meta: { total: number; page: number; limit: number; totalPages: number };
+}
+
+/** Request payload for starting a workout (camelCase). */
+export interface CreateWorkoutPayload {
+  name: string;
+  notes?: string;
+  routineId?: string;
+  startedAt?: string;
+}
+
+/** Request payload for updating a workout, e.g. marking it finished (camelCase). */
+export interface UpdateWorkoutPayload {
+  name?: string;
+  notes?: string;
+  finishedAt?: string;
+  durationSeconds?: number;
+}
+
+/** Request payload for logging/updating a set (camelCase). */
+export interface SetPayload {
+  exerciseId: string;
+  setNumber?: number;
+  reps?: number;
+  weightKg?: number;
+  durationSeconds?: number;
+  distanceMeters?: number;
+  rpe?: number;
+  notes?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,7 +51,34 @@ export class WorkoutsService {
     return this.http.get<Workout>(`${this.base}/${id}`);
   }
 
-  create(data: Partial<Workout>): Observable<Workout> {
+  create(data: CreateWorkoutPayload): Observable<Workout> {
     return this.http.post<Workout>(this.base, data);
+  }
+
+  update(id: string, data: UpdateWorkoutPayload): Observable<Workout> {
+    return this.http.patch<Workout>(`${this.base}/${id}`, data);
+  }
+
+  remove(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${id}`);
+  }
+
+  addSet(workoutId: string, data: SetPayload): Observable<WorkoutSet> {
+    return this.http.post<WorkoutSet>(`${this.base}/${workoutId}/sets`, data);
+  }
+
+  updateSet(
+    workoutId: string,
+    setId: string,
+    data: Partial<SetPayload>,
+  ): Observable<WorkoutSet> {
+    return this.http.patch<WorkoutSet>(
+      `${this.base}/${workoutId}/sets/${setId}`,
+      data,
+    );
+  }
+
+  removeSet(workoutId: string, setId: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${workoutId}/sets/${setId}`);
   }
 }
