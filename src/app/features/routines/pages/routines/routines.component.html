@@ -17,21 +17,25 @@
     </div>
   </div>
 
+  <div *ngIf="loading()" class="routines__loading">Cargando...</div>
+
+  <div *ngIf="error()" class="routines__error">{{ error() }}</div>
+
   <div class="routines__list">
-    <ds-card *ngFor="let r of routines" [raised]="true" [pad]="16">
+    <ds-card *ngFor="let r of routines(); let i = index" [raised]="true" [pad]="16">
       <div class="routines__item">
-        <div class="routines__icon" [style.background]="toneBg(r.tone)">
-          <ds-icon name="dumbbell" [size]="22" [color]="toneColor(r.tone)"/>
+        <div class="routines__icon" [style.background]="toneBg(toneForIndex(i))">
+          <ds-icon name="dumbbell" [size]="22" [color]="toneColor(toneForIndex(i))"/>
         </div>
         <div class="routines__info">
           <div class="routines__meta">
-            <ds-badge tone="neutral">{{ r.category }}</ds-badge>
-            <span class="routines__last">· {{ r.last }}</span>
+            <ds-badge tone="neutral">PPL</ds-badge>
+            <span class="routines__last">· —</span>
           </div>
           <div class="routines__name">{{ r.name }}</div>
           <div class="routines__details">
-            <span><ds-icon name="dumbbell" [size]="12"/> {{ r.exercises }} ejercicios</span>
-            <span><ds-icon name="clock" [size]="12"/> {{ r.minutes }} min</span>
+            <span><ds-icon name="dumbbell" [size]="12"/> {{ exerciseCount(r) }} ejercicios</span>
+            <span *ngIf="r.description" class="routines__desc">{{ r.description }}</span>
           </div>
         </div>
         <div class="routines__play">

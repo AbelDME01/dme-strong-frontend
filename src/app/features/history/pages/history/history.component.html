@@ -11,15 +11,15 @@
   <ds-card [raised]="true" style="margin-top: 18px;">
     <div class="history__month-hero">
       <div>
-        <div class="history__month-label">Abril 2026</div>
+        <div class="history__month-label">{{ monthLabel() }}</div>
         <div class="history__month-count">
-          <span class="history__month-num">14</span>
+          <span class="history__month-num">{{ monthCount() }}</span>
           <span class="history__month-unit">entrenos</span>
         </div>
       </div>
-      <div class="history__month-trend">
-        <div class="history__month-pct">+18%</div>
-        <div class="history__month-vs">vs marzo</div>
+      <div *ngIf="monthTrend() !== null" class="history__month-trend">
+        <div class="history__month-pct">{{ monthTrend()! >= 0 ? '+' : '' }}{{ monthTrend() }}%</div>
+        <div class="history__month-vs">vs mes anterior</div>
       </div>
     </div>
     <div class="history__bars">
@@ -34,10 +34,10 @@
 
   <!-- Workouts List -->
   <div class="history__list">
-    <ds-card *ngFor="let w of workouts" [raised]="true" [pad]="14" style="margin-bottom: 10px;">
+    <ds-card *ngFor="let w of workouts()" [raised]="true" [pad]="14" style="margin-bottom: 10px;">
       <div class="history__item-header">
         <div class="history__date-badge">
-          <div class="history__date-month">ABR</div>
+          <div class="history__date-month">{{ w.month }}</div>
           <div class="history__date-day">{{ w.day }}</div>
         </div>
         <div class="history__item-info">
