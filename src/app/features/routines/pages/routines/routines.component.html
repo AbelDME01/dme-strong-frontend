@@ -1,0 +1,62 @@
+<div class="routines">
+  <div class="routines__header">
+    <h1 class="routines__title">Rutinas</h1>
+    <div class="routines__fab" (click)="createRoutine()">
+      <ds-icon name="plus" [size]="22" color="#06201B"/>
+    </div>
+  </div>
+
+  <div class="routines__filters">
+    <div class="routines__segment">
+      <div *ngFor="let f of filters; let i = index"
+           class="routines__seg-item"
+           [class.routines__seg-item--active]="i === activeFilter"
+           (click)="activeFilter = i">
+        {{ f }}
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="routines__loading">Cargando...</div>
+
+  <div *ngIf="error()" class="routines__error">{{ error() }}</div>
+
+  <div *ngIf="!loading() && routines().length === 0" class="routines__empty">
+    <ds-icon name="dumbbell" [size]="32" color="var(--dme-text-mute)"/>
+    <p>Aún no tienes rutinas.</p>
+    <ds-button icon="plus" (clicked)="createRoutine()">Crear rutina</ds-button>
+  </div>
+
+  <div class="routines__list">
+    <ds-card *ngFor="let r of routines(); let i = index" [raised]="true" [pad]="16">
+      <div class="routines__item" (click)="editRoutine(r)">
+        <div class="routines__icon" [style.background]="toneBg(toneForIndex(i))">
+          <ds-icon name="dumbbell" [size]="22" [color]="toneColor(toneForIndex(i))"/>
+        </div>
+        <div class="routines__info">
+          <div class="routines__meta">
+            <ds-badge tone="neutral">PPL</ds-badge>
+            <span class="routines__last">· —</span>
+          </div>
+          <div class="routines__name">{{ r.name }}</div>
+          <div class="routines__details">
+            <span><ds-icon name="dumbbell" [size]="12"/> {{ exerciseCount(r) }} ejercicios</span>
+            <span *ngIf="r.description" class="routines__desc">{{ r.description }}</span>
+          </div>
+        </div>
+        <div class="routines__actions">
+          <div class="routines__delete" (click)="deleteRoutine(r, $event)">
+            <ds-icon name="trash" [size]="16" color="var(--dme-coral)"/>
+          </div>
+          <div class="routines__play"
+               [class.routines__play--busy]="startingId() === r.id"
+               (click)="startWorkout(r, $event)">
+            <ds-icon name="play" [size]="16" color="var(--dme-mint)"/>
+          </div>
+        </div>
+      </div>
+    </ds-card>
+  </div>
+</div>
+
+<ds-tab-bar active="routines"/>

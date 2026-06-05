@@ -1,0 +1,103 @@
+<div class="workout">
+  <div class="workout__header">
+    <a routerLink="/routines" class="workout__back">
+      <ds-icon name="chevronL" [size]="20" color="var(--dme-text)"/>
+    </a>
+    <div class="workout__title-block">
+      <div class="workout__progress-label">
+        Ejercicio {{ exercises().length ? currentIndex() + 1 : 0 }} / {{ exercises().length }}
+      </div>
+      <div class="workout__routine-name">{{ workout()?.name || 'Entrenamiento' }}</div>
+    </div>
+    <div class="workout__timer-badge">
+      <div class="workout__timer-dot"></div>
+      <span class="workout__timer-value">{{ elapsed() }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="workout__state">Cargando…</div>
+  <div *ngIf="error()" class="workout__error">{{ error() }}</div>
+
+  <ng-container *ngIf="!loading() && currentExercise() as ex">
+    <!-- Exercise -->
+    <div class="workout__exercise">
+      <div>
+        <div class="workout__exercise-name">{{ ex.name }}</div>
+        <div class="workout__exercise-meta">
+          {{ ex.muscleGroup }}
+          <ng-container *ngIf="ex.targetSets">· {{ ex.targetSets }} series objetivo</ng-container>
+          <ng-container *ngIf="ex.targetReps">· {{ ex.targetReps }} reps</ng-container>
+        </div>
+      </div>
+      <div class="workout__nav">
+        <button class="workout__nav-btn" (click)="prevExercise()" [disabled]="currentIndex() === 0">
+          <ds-icon name="chevronL" [size]="18" color="var(--dme-text-dim)"/>
+        </button>
+        <button class="workout__nav-btn" (click)="nextExercise()" [disabled]="currentIndex() >= exercises().length - 1">
+          <ds-icon name="chevron" [size]="18" color="var(--dme-text-dim)"/>
+        </button>
+      </div>
+    </div>
+
+    <!-- Logged sets -->
+    <div class="workout__sets-header">
+      <span class="workout__col-hdr">#</span>
+      <span class="workout__col-hdr">Peso</span>
+      <span class="workout__col-hdr">Reps</span>
+      <span class="workout__col-hdr">RPE</span>
+      <span class="workout__col-hdr"></span>
+    </div>
+
+    <div class="workout__sets">
+      <div *ngFor="let s of currentSets()" class="workout__set workout__set--done">
+        <span class="workout__set-num">{{ s.set_number }}</span>
+        <span class="workout__set-weight">{{ s.weight_kg ?? '—' }}<span class="workout__unit">kg</span></span>
+        <span class="workout__set-reps">{{ s.reps ?? '—' }}</span>
+        <span class="workout__set-rpe" [style.color]="rpeColor(s.rpe)">{{ s.rpe ?? '—' }}</span>
+        <button class="workout__set-del" (click)="removeSet(s)">
+          <ds-icon name="trash" [size]="14" color="var(--dme-coral)"/>
+        </button>
+      </div>
+      <div *ngIf="currentSets().length === 0" class="workout__sets-empty">
+        Sin series registradas todavía.
+      </div>
+    </div>
+
+    <!-- New set inputs -->
+    <div class="workout__entry">
+      <label class="workout__field">
+        <span>Peso (kg)</span>
+        <input type="number" min="0" inputmode="decimal"
+               [ngModel]="weight()" (ngModelChange)="weight.set($event)"/>
+      </label>
+      <label class="workout__field">
+        <span>Reps</span>
+        <input type="number" min="0" inputmode="numeric"
+               [ngModel]="reps()" (ngModelChange)="reps.set($event)"/>
+      </label>
+      <label class="workout__field">
+        <span>RPE</span>
+        <input type="number" min="1" max="10" inputmode="decimal"
+               [ngModel]="rpe()" (ngModelChange)="rpe.set($event)"/>
+      </label>
+    </div>
+
+    <ds-button [full]="true" size="lg" icon="check"
+               style="margin-top: 14px"
+               [disabled]="saving()"
+               (clicked)="completeSet()">
+      {{ saving() ? 'Guardando…' : 'Completar serie' }}
+    </ds-button>
+
+    <ds-button [full]="true" size="lg" variant="secondary"
+               style="margin-top: 10px"
+               [disabled]="finishing()"
+               (clicked)="finishWorkout()">
+      {{ finishing() ? 'Finalizando…' : 'Finalizar entrenamiento' }}
+    </ds-button>
+  </ng-container>
+
+  <div *ngIf="!loading() && exercises().length === 0 && !error()" class="workout__state">
+    Este entrenamiento no tiene ejercicios.
+  </div>
+</div>

@@ -1,0 +1,65 @@
+<div class="exercise">
+  <div class="exercise__header">
+    <a routerLink="/history" class="exercise__back">
+      <ds-icon name="chevronL" [size]="18" color="var(--dme-text)"/>
+    </a>
+    <div class="exercise__name">Press banca</div>
+    <div class="exercise__fav">
+      <ds-icon name="star" [size]="18" color="var(--dme-amber)"/>
+    </div>
+  </div>
+
+  <!-- PR Hero -->
+  <div class="exercise__pr">
+    <div class="exercise__pr-label">Récord personal</div>
+    <div class="exercise__pr-row">
+      <div class="exercise__pr-value">92.5</div>
+      <div class="exercise__pr-unit">kg</div>
+      <div class="exercise__pr-trend">
+        <ds-icon name="trend" [size]="14" color="var(--dme-mint)"/> +5.5%
+      </div>
+    </div>
+    <div class="exercise__pr-sub">1RM estimado · últimos 3 meses</div>
+  </div>
+
+  <!-- Chart -->
+  <ds-card [raised]="true" style="margin-top: 18px; padding: 16px 12px;">
+    <div class="exercise__ranges">
+      <div *ngFor="let r of ranges; let i = index"
+           class="exercise__range"
+           [class.exercise__range--active]="i === activeRange"
+           (click)="activeRange = i">{{ r }}</div>
+    </div>
+    <svg width="100%" [attr.height]="chartH" [attr.viewBox]="'0 0 ' + chartW + ' ' + chartH">
+      <defs>
+        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#00E5A0" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#00E5A0" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path [attr.d]="areaPath" fill="url(#chartGrad)"/>
+      <path [attr.d]="linePath" fill="none" stroke="#00E5A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Last point tooltip -->
+      <g>
+        <circle [attr.cx]="sx(pts.length - 1)" [attr.cy]="sy(pts[pts.length - 1])"
+          r="5" fill="#0B0F0E" stroke="#00E5A0" stroke-width="2.2"/>
+        <rect [attr.x]="sx(pts.length - 1) - 36" [attr.y]="sy(pts[pts.length - 1]) - 32"
+          width="46" height="22" rx="6" fill="#00E5A0"/>
+        <text [attr.x]="sx(pts.length - 1) - 13" [attr.y]="sy(pts[pts.length - 1]) - 17"
+          font-size="11" font-weight="700" text-anchor="middle" fill="#06201B">92.5</text>
+      </g>
+    </svg>
+  </ds-card>
+
+  <!-- Recent Sets -->
+  <div class="exercise__sets">
+    <div class="exercise__sets-title">Últimas series</div>
+    <div *ngFor="let s of recentSets" class="exercise__set"
+         [class.exercise__set--pr]="s.pr">
+      <span class="exercise__set-date">{{ s.date }}</span>
+      <span class="exercise__set-lift">{{ s.weight }} <span class="exercise__set-x">×</span> {{ s.reps }}</span>
+      <span class="exercise__set-rpe">RPE {{ s.rpe }}</span>
+      <ds-icon *ngIf="s.pr" name="trophy" [size]="14" color="var(--dme-amber)"/>
+    </div>
+  </div>
+</div>

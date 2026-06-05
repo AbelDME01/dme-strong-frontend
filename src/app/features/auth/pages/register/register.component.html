@@ -1,0 +1,70 @@
+<div class="register">
+  <div class="register__header">
+    <a routerLink="/auth/login" class="register__back">
+      <ds-icon name="chevronL" [size]="20" color="var(--dme-text)"/>
+    </a>
+  </div>
+
+  <div class="register__hero">
+    <h1 class="register__title">Crea tu cuenta</h1>
+    <p class="register__subtitle">Empecemos con lo básico.</p>
+  </div>
+
+  <form class="register__form" (ngSubmit)="onSubmit()" #form="ngForm">
+    <div class="auth-field">
+      <label class="auth-field__label">NOMBRE</label>
+      <div class="auth-field__wrap">
+        <ds-icon name="user" [size]="18" color="var(--dme-text-dim)"/>
+        <input class="auth-field__input"
+               type="text"
+               placeholder="Tu nombre"
+               [(ngModel)]="fullName"
+               name="fullName"
+               autocomplete="name"
+               required/>
+      </div>
+      <div *ngIf="nameInvalid" class="auth-field__error">Introduce tu nombre.</div>
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-field__label">EMAIL</label>
+      <div class="auth-field__wrap">
+        <ds-icon name="note" [size]="18" color="var(--dme-text-dim)"/>
+        <input class="auth-field__input"
+               type="email"
+               placeholder="tu@email.com"
+               [(ngModel)]="email"
+               name="email"
+               autocomplete="email"
+               required/>
+      </div>
+      <div *ngIf="emailInvalid" class="auth-field__error">Introduce un correo válido.</div>
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-field__label">CONTRASEÑA</label>
+      <div class="auth-field__wrap">
+        <ds-icon name="settings" [size]="18" color="var(--dme-text-dim)"/>
+        <input class="auth-field__input"
+               type="password"
+               placeholder="Mínimo 8 caracteres"
+               [(ngModel)]="password"
+               name="password"
+               autocomplete="new-password"
+               minlength="8"
+               required/>
+      </div>
+      <div *ngIf="passwordInvalid" class="auth-field__error">La contraseña debe tener al menos 8 caracteres.</div>
+    </div>
+
+    <div *ngIf="error()" class="auth-error">{{ error() }}</div>
+    <div *ngIf="info()" class="auth-info">{{ info() }}</div>
+
+    <div class="register__footer">
+      <p class="register__terms">Al continuar aceptas los términos y la política de privacidad.</p>
+      <ds-button type="submit" [full]="true" size="lg" iconRight="chevron" [disabled]="loading()">
+        {{ loading() ? 'Creando cuenta...' : 'Crear cuenta' }}
+      </ds-button>
+    </div>
+  </form>
+</div>

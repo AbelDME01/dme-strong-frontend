@@ -1,0 +1,122 @@
+<div class="builder">
+  <div class="builder__header">
+    <a routerLink="/routines" class="builder__close">
+      <ds-icon name="close" [size]="18" color="var(--dme-text)"/>
+    </a>
+    <h2 class="builder__title">{{ isEdit() ? 'Editar rutina' : 'Nueva rutina' }}</h2>
+    <span class="builder__save"
+          [class.builder__save--disabled]="!canSave()"
+          (click)="save()">
+      {{ saving() ? 'Guardando…' : 'Guardar' }}
+    </span>
+  </div>
+
+  <div *ngIf="error()" class="builder__error">{{ error() }}</div>
+
+  <div class="builder__name-section">
+    <label class="builder__name-label" for="routineName">Nombre</label>
+    <input id="routineName"
+           class="builder__input"
+           type="text"
+           placeholder="Ej. Empuje · Pecho y tríceps"
+           [ngModel]="name()"
+           (ngModelChange)="name.set($event)"/>
+  </div>
+
+  <div class="builder__name-section">
+    <label class="builder__name-label" for="routineDesc">Descripción</label>
+    <textarea id="routineDesc"
+              class="builder__input builder__input--area"
+              rows="2"
+              placeholder="Opcional"
+              [ngModel]="description()"
+              (ngModelChange)="description.set($event)"></textarea>
+  </div>
+
+  <div class="builder__exercises-header">
+    <span class="builder__exercises-title">
+      Ejercicios <span class="builder__exercises-count">· {{ exercises().length }}</span>
+    </span>
+    <span class="builder__add" (click)="pickerOpen.set(true)">
+      <ds-icon name="plus" [size]="14" color="var(--dme-mint)"/> Añadir
+    </span>
+  </div>
+
+  <div *ngIf="exercises().length === 0" class="builder__empty">
+    Aún no hay ejercicios. Pulsa “Añadir” para empezar.
+  </div>
+
+  <div class="builder__list">
+    <div *ngFor="let e of exercises(); let i = index" class="builder__exercise">
+      <div class="builder__exercise-top">
+        <span class="builder__exercise-num">{{ i + 1 }}</span>
+        <div class="builder__exercise-info">
+          <div class="builder__exercise-name">{{ e.name }}</div>
+          <div class="builder__exercise-meta">{{ e.muscleGroup }}</div>
+        </div>
+        <div class="builder__exercise-controls">
+          <button class="builder__icon-btn" (click)="moveUp(i)" [disabled]="i === 0">
+            <ds-icon name="chevronL" [size]="16" color="var(--dme-text-dim)"/>
+          </button>
+          <button class="builder__icon-btn" (click)="moveDown(i)" [disabled]="i === exercises().length - 1">
+            <ds-icon name="chevron" [size]="16" color="var(--dme-text-dim)"/>
+          </button>
+          <button class="builder__icon-btn" (click)="removeExercise(i)">
+            <ds-icon name="trash" [size]="16" color="var(--dme-coral)"/>
+          </button>
+        </div>
+      </div>
+      <div class="builder__targets">
+        <label class="builder__target">
+          <span>Series</span>
+          <input type="number" min="0"
+                 [ngModel]="e.targetSets"
+                 (ngModelChange)="setSets(i, $event)"/>
+        </label>
+        <label class="builder__target">
+          <span>Reps</span>
+          <input type="number" min="0"
+                 [ngModel]="e.targetReps"
+                 (ngModelChange)="setReps(i, $event)"/>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <ds-button [full]="true" size="lg" icon="check"
+             style="margin-top: 18px"
+             [disabled]="!canSave()"
+             (clicked)="save()">
+    {{ isEdit() ? 'Guardar cambios' : 'Crear rutina' }}
+  </ds-button>
+</div>
+
+<!-- Exercise picker -->
+<div *ngIf="pickerOpen()" class="picker" (click)="pickerOpen.set(false)">
+  <div class="picker__sheet" (click)="$event.stopPropagation()">
+    <div class="picker__handle"></div>
+    <div class="picker__search">
+      <ds-icon name="search" [size]="18" color="var(--dme-text-dim)"/>
+      <input type="text" placeholder="Buscar ejercicio"
+             [ngModel]="pickerQuery()"
+             (ngModelChange)="pickerQuery.set($event)"/>
+    </div>
+    <div class="picker__list">
+      <div *ngFor="let ex of filteredCatalog()"
+           class="picker__item"
+           (click)="addExercise(ex)">
+        <div class="picker__item-icon">
+          <ds-icon name="dumbbell" [size]="18" color="var(--dme-mint)"/>
+        </div>
+        <div class="picker__item-info">
+          <div class="picker__item-name">{{ ex.name }}</div>
+          <div class="picker__item-meta">{{ ex.muscle_group }}</div>
+        </div>
+        <ds-icon name="plus" [size]="16" color="var(--dme-mint)"/>
+      </div>
+      <div *ngIf="filteredCatalog().length === 0" class="picker__empty">
+        No hay ejercicios que coincidan.
+      </div>
+    </div>
+  </div>
+</div>

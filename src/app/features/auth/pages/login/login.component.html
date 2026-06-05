@@ -1,0 +1,56 @@
+<div class="login">
+  <div class="login__logo">
+    <ds-logo [size]="36"/>
+  </div>
+
+  <div class="login__hero">
+    <h1 class="login__title">Bienvenido<br><span class="login__accent">de vuelta</span></h1>
+    <p class="login__subtitle">Entra para seguir tu progreso.</p>
+  </div>
+
+  <form class="login__form" (ngSubmit)="onSubmit()" #form="ngForm">
+    <div class="auth-field">
+      <label class="auth-field__label">EMAIL</label>
+      <div class="auth-field__wrap">
+        <ds-icon name="user" [size]="18" color="var(--dme-text-dim)"/>
+        <input class="auth-field__input"
+               type="email"
+               placeholder="tu@email.com"
+               [(ngModel)]="email"
+               name="email"
+               autocomplete="email"
+               required/>
+      </div>
+      <div *ngIf="emailInvalid" class="auth-field__error">Introduce un correo válido.</div>
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-field__label">CONTRASEÑA</label>
+      <div class="auth-field__wrap">
+        <ds-icon name="settings" [size]="18" color="var(--dme-text-dim)"/>
+        <input class="auth-field__input"
+               type="password"
+               placeholder="••••••••"
+               [(ngModel)]="password"
+               name="password"
+               autocomplete="current-password"
+               required/>
+      </div>
+      <div *ngIf="passwordInvalid" class="auth-field__error">La contraseña es obligatoria.</div>
+    </div>
+
+    <div *ngIf="error()" class="auth-error">{{ error() }}</div>
+
+    <div class="login__forgot">¿Olvidaste tu contraseña?</div>
+
+    <div class="login__actions">
+      <ds-button type="submit" [full]="true" size="lg" iconRight="chevron" [disabled]="loading()">
+        {{ loading() ? 'Entrando...' : 'Iniciar sesión' }}
+      </ds-button>
+
+      <p class="login__register">
+        ¿Nuevo aquí? <a routerLink="/auth/register" class="login__register-link">Crea una cuenta</a>
+      </p>
+    </div>
+  </form>
+</div>
