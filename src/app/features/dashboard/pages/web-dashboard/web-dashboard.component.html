@@ -53,8 +53,8 @@
     <div class="dashboard__content">
       <div class="dashboard__content-header">
         <div>
-          <div class="dashboard__date">Martes, 21 de abril</div>
-          <h1 class="dashboard__greeting">Buenas, Rubén 👋</h1>
+          <div class="dashboard__date">{{ todayLabel() }}</div>
+          <h1 class="dashboard__greeting">Buenas, {{ displayName() }} 👋</h1>
         </div>
         <div class="dashboard__header-actions">
           <ds-button variant="secondary" size="sm" icon="calendar">Semana</ds-button>
@@ -125,13 +125,14 @@
             </div>
           </div>
           <div class="dashboard__bars">
-            <div *ngFor="let v of volumeBars; let i = index" class="dashboard__bar-col">
+            <div *ngFor="let v of volumeBars(); let i = index" class="dashboard__bar-col">
               <div class="dashboard__bar"
-                   [class.dashboard__bar--latest]="i === volumeBars.length - 1"
+                   [class.dashboard__bar--latest]="i === volumeBars().length - 1"
                    [style.height.%]="barPct(v)">
               </div>
-              <span class="dashboard__bar-label" [class.dashboard__bar-label--latest]="i === volumeBars.length - 1">S{{ i + 1 }}</span>
+              <span class="dashboard__bar-label" [class.dashboard__bar-label--latest]="i === volumeBars().length - 1">S{{ i + 1 }}</span>
             </div>
+            <div *ngIf="!loading() && volumeBars().length === 0" class="dashboard__empty">Sin datos de volumen todavía.</div>
           </div>
         </ds-card>
 
@@ -142,7 +143,7 @@
             <ds-icon name="trophy" [size]="16" color="var(--dme-amber)"/>
           </div>
           <div class="dashboard__prs-list">
-            <div *ngFor="let pr of recentPRs; let last = last"
+            <div *ngFor="let pr of recentPRs(); let last = last"
                  class="dashboard__pr-item"
                  [class.dashboard__pr-item--last]="last">
               <div>
@@ -151,6 +152,7 @@
               </div>
               <div class="dashboard__pr-weight">{{ pr.weight }}</div>
             </div>
+            <div *ngIf="!loading() && recentPRs().length === 0" class="dashboard__empty">Aún no hay récords.</div>
           </div>
         </ds-card>
       </div>
@@ -165,7 +167,7 @@
           <div class="dashboard__table-head">
             <span>Fecha</span><span>Entreno</span><span>Volumen</span><span>Series</span><span>Duración</span><span></span>
           </div>
-          <div *ngFor="let r of recentWorkouts; let last = last"
+          <div *ngFor="let r of recentWorkouts(); let last = last"
                class="dashboard__table-row"
                [class.dashboard__table-row--last]="last">
             <span class="dashboard__table-date">{{ r.date }}</span>
@@ -179,6 +181,9 @@
             <span class="dashboard__table-dim">{{ r.time }}</span>
             <ds-icon name="chevron" [size]="14" color="var(--dme-text-mute)"/>
           </div>
+          <div *ngIf="loading()" class="dashboard__empty dashboard__empty--row">Cargando…</div>
+          <div *ngIf="error()" class="dashboard__empty dashboard__empty--row" role="alert">{{ error() }}</div>
+          <div *ngIf="!loading() && !error() && recentWorkouts().length === 0" class="dashboard__empty dashboard__empty--row">Sin entrenamientos registrados.</div>
         </ds-card>
       </div>
     </div>

@@ -3,6 +3,15 @@
   background: var(--dme-bg);
   min-height: 100dvh;
 
+  &__state {
+    margin-top: 24px;
+    text-align: center;
+    color: var(--dme-text-dim);
+    font-size: 14px;
+
+    &--error { color: var(--dme-coral, #ff6b5b); }
+  }
+
   &__header {
     display: flex;
     align-items: center;
