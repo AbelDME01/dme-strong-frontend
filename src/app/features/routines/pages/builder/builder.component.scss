@@ -39,9 +39,36 @@
     color: var(--dme-mint);
     font-weight: 700;
     cursor: pointer;
+
+    &--disabled { color: var(--dme-text-mute); pointer-events: none; }
+  }
+
+  &__error {
+    margin-top: 16px;
+    background: rgba(255, 107, 91, 0.1);
+    color: var(--dme-coral);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
   }
 
   &__name-section { margin-top: 22px; }
+
+  &__input {
+    width: 100%;
+    background: var(--dme-surface2);
+    border: 1px solid var(--dme-border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: var(--dme-text);
+    font-size: 15px;
+    font-family: var(--dme-font);
+    outline: none;
+
+    &:focus { border-color: var(--dme-mint); }
+    &::placeholder { color: var(--dme-text-mute); }
+    &--area { resize: none; }
+  }
 
   &__name-label {
     font-size: 11px;
@@ -103,14 +130,82 @@
     overflow: hidden;
   }
 
+  &__empty {
+    margin-top: 14px;
+    color: var(--dme-text-mute);
+    font-size: 13px;
+    text-align: center;
+    padding: 18px 0;
+  }
+
   &__exercise {
     background: var(--dme-surface2);
     border-radius: 14px;
     padding: 12px 14px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 12px;
     border: 1px solid var(--dme-border);
+  }
+
+  &__exercise-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__exercise-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  &__icon-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--dme-surface3);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:disabled { opacity: 0.35; cursor: not-allowed; }
+  }
+
+  &__targets {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__target {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    span {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--dme-text-mute);
+    }
+
+    input {
+      width: 100%;
+      background: var(--dme-surface3);
+      border: 1px solid var(--dme-border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      color: var(--dme-text);
+      font-size: 14px;
+      font-family: var(--dme-font);
+      outline: none;
+
+      &:focus { border-color: var(--dme-mint); }
+    }
   }
 
   &__exercise-num {
@@ -146,5 +241,107 @@
     font-size: 12px;
     color: var(--dme-text-dim);
     margin-top: 2px;
+  }
+}
+
+.picker {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 50;
+
+  &__sheet {
+    width: 100%;
+    max-height: 78dvh;
+    background: var(--dme-surface);
+    border-radius: 24px 24px 0 0;
+    border: 1px solid var(--dme-border);
+    padding: 12px 16px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__handle {
+    width: 40px;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--dme-border-strong);
+    align-self: center;
+  }
+
+  &__search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--dme-surface2);
+    border: 1px solid var(--dme-border);
+    border-radius: 14px;
+    padding: 0 14px;
+
+    input {
+      flex: 1;
+      height: 48px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--dme-text);
+      font-size: 15px;
+      font-family: var(--dme-font);
+
+      &::placeholder { color: var(--dme-text-mute); }
+    }
+  }
+
+  &__list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--dme-surface2);
+    border: 1px solid var(--dme-border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+
+  &__item-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--dme-surface3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__item-info { flex: 1; min-width: 0; }
+
+  &__item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dme-text);
+  }
+
+  &__item-meta {
+    font-size: 12px;
+    color: var(--dme-text-dim);
+    margin-top: 2px;
+  }
+
+  &__empty {
+    text-align: center;
+    color: var(--dme-text-mute);
+    font-size: 13px;
+    padding: 24px 0;
   }
 }
