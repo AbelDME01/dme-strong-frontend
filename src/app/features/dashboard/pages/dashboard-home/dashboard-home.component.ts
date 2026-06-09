@@ -5,7 +5,6 @@ import { DsBadgeComponent } from '../../../../shared/components/ds-badge/ds-badg
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
-import { DsLogoComponent } from '../../../../shared/components/ds-logo/ds-logo.component';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { RecordsService } from '../../../../core/api/records.service';
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -16,26 +15,17 @@ interface PrRow { exercise: string; weight: string; date: string }
 interface WorkoutRow { date: string; name: string; vol: string; sets: number; time: string; prs: number }
 
 @Component({
-  selector: 'app-web-dashboard',
+  selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule, DsBadgeComponent, DsButtonComponent, DsCardComponent, DsIconComponent, DsLogoComponent],
-  templateUrl: './web-dashboard.component.html',
-  styleUrl: './web-dashboard.component.scss',
+  imports: [CommonModule, DsBadgeComponent, DsButtonComponent, DsCardComponent, DsIconComponent],
+  templateUrl: './dashboard-home.component.html',
+  styleUrl: './dashboard-home.component.scss',
 })
-export class WebDashboardComponent implements OnInit {
+export class DashboardHomeComponent implements OnInit {
   private workoutsService = inject(WorkoutsService);
   private recordsService = inject(RecordsService);
   private authService = inject(AuthService);
 
-  // --- Static UI scaffolding (navigation chrome, not data-driven) ---
-  navItems = [
-    { icon: 'home',     label: 'Inicio',      active: true },
-    { icon: 'dumbbell', label: 'Rutinas',      active: false },
-    { icon: 'calendar', label: 'Historial',    active: false },
-    { icon: 'chart',    label: 'Progreso',     active: false },
-    { icon: 'trophy',   label: 'Récords',      active: false },
-    { icon: 'ruler',    label: 'Medidas',      active: false },
-  ];
   exerciseTags = ['Press banca', 'Press inclinado', 'Aperturas', 'Press militar', '+2'];
   weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
