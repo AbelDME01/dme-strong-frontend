@@ -1,0 +1,33 @@
+<aside class="side-nav">
+  <div class="side-nav__logo">
+    <ds-logo [size]="26"/>
+  </div>
+
+  <div class="side-nav__label">Principal</div>
+  <nav class="side-nav__nav">
+    <a *ngFor="let item of navItems"
+       class="side-nav__item"
+       [routerLink]="item.route"
+       routerLinkActive="side-nav__item--active"
+       #rla="routerLinkActive">
+      <ds-icon [name]="item.icon" [size]="16" [color]="rla.isActive ? 'var(--dme-mint)' : 'var(--dme-text-dim)'"/>
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <div class="side-nav__footer">
+    <div class="side-nav__pro-card">
+      <div class="side-nav__pro-title">PRO</div>
+      <div class="side-nav__pro-desc">Análisis ilimitados y rutinas IA</div>
+      <ds-button size="sm" [full]="true" style="margin-top: 10px">Mejorar plan</ds-button>
+    </div>
+    <a class="side-nav__user" routerLink="/profile">
+      <div class="side-nav__user-avatar">{{ avatarInitial() }}</div>
+      <div class="side-nav__user-info">
+        <div class="side-nav__user-name">{{ displayName() }}</div>
+        <div class="side-nav__user-email">{{ email() }}</div>
+      </div>
+      <ds-icon name="settings" [size]="14" color="var(--dme-text-mute)"/>
+    </a>
+  </div>
+</aside>

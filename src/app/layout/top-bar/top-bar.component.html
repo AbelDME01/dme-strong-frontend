@@ -1,0 +1,13 @@
+<div class="top-bar">
+  <div class="top-bar__search">
+    <ds-icon name="search" [size]="15" color="var(--dme-text-mute)"/>
+    <span class="top-bar__search-placeholder">Buscar ejercicios, rutinas…</span>
+    <div class="top-bar__kbd">⌘K</div>
+  </div>
+  <div class="top-bar__spacer"></div>
+  <div class="top-bar__bell">
+    <ds-icon name="bell" [size]="16" color="var(--dme-text)"/>
+    <div class="top-bar__bell-dot"></div>
+  </div>
+  <ds-button size="sm" icon="plus" (clicked)="startWorkout()">Nuevo entreno</ds-button>
+</div>
