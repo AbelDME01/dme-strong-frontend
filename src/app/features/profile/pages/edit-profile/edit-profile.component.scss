@@ -36,6 +36,33 @@
     color: var(--dme-mint);
     font-weight: 700;
     cursor: pointer;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font-family: var(--dme-font);
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+
+  &__error {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255, 107, 91, 0.12);
+    border: 1px solid var(--dme-coral, #ff6b5b);
+    color: var(--dme-coral, #ff6b5b);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  &__loading {
+    margin-top: 40px;
+    text-align: center;
+    color: var(--dme-text-dim);
+    font-size: 14px;
   }
 
   &__avatar-section {

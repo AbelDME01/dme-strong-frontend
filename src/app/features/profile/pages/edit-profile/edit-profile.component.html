@@ -4,13 +4,17 @@
       <ds-icon name="chevronL" [size]="18" color="var(--dme-text)"/>
     </a>
     <div class="edit-profile__title">Editar perfil</div>
-    <span class="edit-profile__save">Guardar</span>
+    <button
+      type="button"
+      class="edit-profile__save"
+      [disabled]="saving() || loading()"
+      (click)="save()">{{ saving() ? 'Guardando…' : 'Guardar' }}</button>
   </div>
 
   <!-- Avatar -->
   <div class="edit-profile__avatar-section">
     <div class="edit-profile__avatar">
-      R
+      {{ (fullName() || email || '?').charAt(0).toUpperCase() }}
       <div class="edit-profile__avatar-edit">
         <ds-icon name="edit" [size]="14" color="#06201B"/>
       </div>
@@ -18,36 +22,23 @@
     <div class="edit-profile__avatar-cta">Cambiar foto</div>
   </div>
 
+  <div *ngIf="error()" class="edit-profile__error" role="alert">{{ error() }}</div>
+
   <!-- Form -->
-  <div class="edit-profile__form">
-    <ds-input label="Nombre" value="Rubén García" icon="user"/>
-    <ds-input label="Email" value="ruben@dme.app" icon="note"/>
+  <div class="edit-profile__form" *ngIf="!loading(); else loadingTpl">
+    <ds-input label="Nombre" icon="user" [editable]="true"
+              [value]="fullName()" (valueChange)="fullName.set($event)"/>
+    <ds-input label="Email" icon="note" [value]="email"/>
 
     <div class="edit-profile__row">
-      <ds-input label="Peso (kg)" value="78.4" icon="weight"/>
-      <ds-input label="Altura (cm)" value="178" icon="ruler"/>
-    </div>
-
-    <!-- Goal Selector -->
-    <div>
-      <div class="edit-profile__selector-label">Objetivo</div>
-      <div class="edit-profile__goals">
-        <div *ngFor="let g of goals; let i = index"
-             class="edit-profile__goal"
-             [class.edit-profile__goal--active]="i === selectedGoal"
-             (click)="selectedGoal = i">{{ g }}</div>
-      </div>
-    </div>
-
-    <!-- Experience Selector -->
-    <div>
-      <div class="edit-profile__selector-label">Experiencia</div>
-      <div class="edit-profile__experience">
-        <div *ngFor="let e of experience; let i = index"
-             class="edit-profile__exp-btn"
-             [class.edit-profile__exp-btn--active]="i === selectedExp"
-             (click)="selectedExp = i">{{ e }}</div>
-      </div>
+      <ds-input label="Peso (kg)" icon="weight" [editable]="true" type="text" inputmode="decimal"
+                placeholder="—" [value]="weightKg()" (valueChange)="weightKg.set($event)"/>
+      <ds-input label="Altura (cm)" icon="ruler" [editable]="true" type="text" inputmode="decimal"
+                placeholder="—" [value]="heightCm()" (valueChange)="heightCm.set($event)"/>
     </div>
   </div>
+
+  <ng-template #loadingTpl>
+    <div class="edit-profile__loading">Cargando…</div>
+  </ng-template>
 </div>
