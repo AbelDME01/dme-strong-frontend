@@ -1,9 +1,16 @@
+@use 'theme/breakpoints' as bp;
+
 .builder {
   padding: 62px 20px 32px;
   background: var(--dme-bg);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+
+  @include bp.page-desktop(760px);
+  @include bp.desktop-up {
+    width: 100%;
+  }
 
   &__header {
     display: flex;
@@ -252,6 +259,12 @@
   align-items: flex-end;
   z-index: 50;
 
+  // En desktop el bottom-sheet pasa a diálogo centrado.
+  @include bp.desktop-up {
+    align-items: center;
+    justify-content: center;
+  }
+
   &__sheet {
     width: 100%;
     max-height: 78dvh;
@@ -262,6 +275,11 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+
+    @include bp.desktop-up {
+      max-width: 560px;
+      border-radius: 24px;
+    }
   }
 
   &__handle {

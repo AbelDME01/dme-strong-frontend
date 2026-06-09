@@ -1,8 +1,12 @@
+@use 'theme/breakpoints' as bp;
+
 .history {
   padding: 62px 20px 110px;
   background: var(--dme-bg);
   min-height: 100dvh;
   position: relative;
+
+  @include bp.page-desktop(900px);
 
   &__header {
     display: flex;

@@ -1,9 +1,22 @@
+@use 'theme/breakpoints' as bp;
+
 .login {
   padding: 60px 28px 32px;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
   background: var(--dme-bg);
+
+  // En pantallas anchas la página entera se presenta como card centrada.
+  @include bp.tablet-up {
+    min-height: auto;
+    max-width: 440px;
+    margin: 8dvh auto;
+    padding: 40px 32px;
+    background: var(--dme-surface);
+    border: 1px solid var(--dme-border);
+    border-radius: var(--dme-radius-xl);
+  }
 
   &__logo { margin-top: 20px; }
 
