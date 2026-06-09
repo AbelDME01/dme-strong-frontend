@@ -10,6 +10,20 @@ interface PaginatedMeasurements {
   meta: { total: number; page: number; limit: number; totalPages: number };
 }
 
+/** Request payload for creating a measurement (camelCase to match the backend DTO). */
+export interface CreateMeasurementPayload {
+  measuredAt?: string;
+  weightKg?: number;
+  bodyFatPercentage?: number;
+  muscleMassKg?: number;
+  chestCm?: number;
+  waistCm?: number;
+  hipsCm?: number;
+  armCm?: number;
+  thighCm?: number;
+  notes?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MeasurementsService {
   private http = inject(HttpClient);
@@ -17,5 +31,9 @@ export class MeasurementsService {
 
   getAll(): Observable<Measurement[]> {
     return this.http.get<PaginatedMeasurements>(this.base).pipe(map((r) => r.data));
+  }
+
+  create(data: CreateMeasurementPayload): Observable<Measurement> {
+    return this.http.post<Measurement>(this.base, data);
   }
 }

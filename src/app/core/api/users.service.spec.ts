@@ -35,4 +35,17 @@ describe('UsersService', () => {
 
     expect(result).toEqual({ id: 'p1', full_name: 'QA' } as never);
   });
+
+  it('updateProfile PUTs the camelCase payload to /users/me', () => {
+    const payload = { fullName: 'New Name', heightCm: 180 };
+    let result: unknown;
+    service.updateProfile(payload).subscribe((r) => (result = r));
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/users/me`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(payload);
+    req.flush({ id: 'p1', full_name: 'New Name', height_cm: 180 });
+
+    expect(result).toEqual({ id: 'p1', full_name: 'New Name', height_cm: 180 } as never);
+  });
 });

@@ -47,6 +47,32 @@ describe('WorkoutsService', () => {
     req.flush({ id: 'w1' });
   });
 
+  it('getRecentWithSets hydrates each listed workout via its detail endpoint', () => {
+    let result: unknown[] = [];
+    service.getRecentWithSets(2).subscribe((r) => (result = r));
+
+    // 1) the list call
+    const listReq = httpMock.expectOne(base);
+    listReq.flush({
+      data: [{ id: 'w1' }, { id: 'w2' }],
+      meta: { total: 2, page: 1, limit: 20, totalPages: 1 },
+    });
+
+    // 2) one detail call per workout, with sets attached
+    httpMock.expectOne(`${base}/w1`).flush({ id: 'w1', workout_sets: [{ id: 's1' }] });
+    httpMock.expectOne(`${base}/w2`).flush({ id: 'w2', workout_sets: [] });
+
+    expect(result.length).toBe(2);
+    expect((result[0] as { workout_sets: unknown[] }).workout_sets.length).toBe(1);
+  });
+
+  it('getRecentWithSets makes no detail calls when the list is empty', () => {
+    let result: unknown[] = [{ placeholder: true }];
+    service.getRecentWithSets().subscribe((r) => (result = r));
+    httpMock.expectOne(base).flush({ data: [], meta: { total: 0, page: 1, limit: 20, totalPages: 0 } });
+    expect(result).toEqual([]);
+  });
+
   it('create POSTs the payload', () => {
     service.create({ name: 'Push' }).subscribe();
     const req = httpMock.expectOne(base);

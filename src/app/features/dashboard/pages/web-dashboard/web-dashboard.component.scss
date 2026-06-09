@@ -1,6 +1,18 @@
 .dashboard {
   display: flex;
   width: 100%;
+
+  &__empty {
+    color: var(--dme-text-mute);
+    font-size: 13px;
+    align-self: center;
+
+    &--row {
+      padding: 18px;
+      text-align: center;
+      width: 100%;
+    }
+  }
   min-height: 100dvh;
   background: var(--dme-bg);
   color: var(--dme-text);

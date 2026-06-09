@@ -67,7 +67,7 @@ export class HistoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading.set(true);
-    this.workoutsService.getAll().subscribe({
+    this.workoutsService.getRecentWithSets().subscribe({
       next: (data) => {
         this.rawWorkouts.set(data);
         this.loading.set(false);
