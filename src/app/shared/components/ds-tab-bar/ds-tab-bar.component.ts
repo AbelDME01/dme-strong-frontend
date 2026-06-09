@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { DsIconComponent } from '../ds-icon/ds-icon.component';
@@ -21,9 +21,9 @@ interface Tab {
          routerLinkActive
          #rla="routerLinkActive"
          class="ds-tabbar__tab"
-         [class.ds-tabbar__tab--active]="rla.isActive || active === tab.id">
+         [class.ds-tabbar__tab--active]="rla.isActive">
         <ds-icon [name]="tab.icon" [size]="22"
-          [color]="(rla.isActive || active === tab.id) ? 'var(--dme-mint)' : 'var(--dme-text-mute)'"/>
+          [color]="rla.isActive ? 'var(--dme-mint)' : 'var(--dme-text-mute)'"/>
         <span class="ds-tabbar__label">{{ tab.label }}</span>
       </a>
     </div>
@@ -67,13 +67,10 @@ interface Tab {
   `],
 })
 export class DsTabBarComponent {
-  @Input() active = 'home';
-
   tabs: Tab[] = [
     { id: 'home',     icon: 'home',     label: 'Inicio',   route: '/home' },
     { id: 'routines', icon: 'dumbbell', label: 'Rutinas',  route: '/routines' },
     { id: 'history',  icon: 'calendar', label: 'Historial',route: '/history' },
-    { id: 'stats',    icon: 'chart',    label: 'Progreso', route: '/stats' },
     { id: 'profile',  icon: 'user',     label: 'Perfil',   route: '/profile' },
   ];
 }
