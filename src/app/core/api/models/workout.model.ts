@@ -10,6 +10,7 @@ export interface WorkoutSet {
   rpe: number | null;
   notes: string | null;
   created_at: string;
+  exercise?: { id: string; name: string; muscle_group: string } | null;
 }
 
 export interface Workout {

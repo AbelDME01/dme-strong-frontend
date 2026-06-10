@@ -79,5 +79,56 @@ export function totalSets(workouts: readonly Workout[]): number {
   return workouts.reduce((n, w) => n + (w.workout_sets?.length ?? 0), 0);
 }
 
+/**
+ * Returns the total volume (kg) of all workouts that started in the current
+ * Monday-to-Sunday calendar week.
+ */
+export function weekVolume(workouts: readonly Workout[]): number {
+  const monday = startOfCurrentWeek();
+  return workouts
+    .filter((w) => new Date(w.started_at) >= monday)
+    .reduce((sum, w) => sum + workoutVolume(w.workout_sets), 0);
+}
+
+/**
+ * Returns a 7-element boolean array (Mon=0..Sun=6) where true means the user
+ * logged at least one workout on that day in the current calendar week.
+ */
+export function computeWeekDone(workouts: readonly Workout[]): boolean[] {
+  const done = [false, false, false, false, false, false, false];
+  const monday = startOfCurrentWeek();
+  for (const w of workouts) {
+    const d = new Date(w.started_at);
+    if (d >= monday) done[(d.getDay() + 6) % 7] = true;
+  }
+  return done;
+}
+
+/**
+ * Returns the number of consecutive days (ending today) on which at least one
+ * workout was logged.
+ */
+export function streakDays(workouts: readonly Workout[]): number {
+  if (!workouts.length) return 0;
+  const days = new Set(
+    workouts.map((w) => new Date(w.started_at).toLocaleDateString('sv-SE')),
+  );
+  let streak = 0;
+  const cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+  while (days.has(cursor.toLocaleDateString('sv-SE'))) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
+function startOfCurrentWeek(): Date {
+  const monday = new Date();
+  monday.setHours(0, 0, 0, 0);
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  return monday;
+}
+
 /** Re-exported so callers don't import the model just for the helper signature. */
 export { setsForExercise };

@@ -1,7 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { DsBadgeComponent } from '../../../../shared/components/ds-badge/ds-badge.component';
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
@@ -12,7 +11,7 @@ import { Routine } from '../../../../core/api/models';
 @Component({
   selector: 'app-routines',
   standalone: true,
-  imports: [CommonModule, DsBadgeComponent, DsButtonComponent, DsCardComponent, DsIconComponent],
+  imports: [CommonModule, DsButtonComponent, DsCardComponent, DsIconComponent],
   templateUrl: './routines.component.html',
   styleUrl: './routines.component.scss',
 })
@@ -20,9 +19,6 @@ export class RoutinesComponent implements OnInit {
   private routinesService = inject(RoutinesService);
   private workoutsService = inject(WorkoutsService);
   private router = inject(Router);
-
-  filters = ['Todas', 'PPL', 'Full Body', 'Arnold', 'Accesorios'];
-  activeFilter = 0;
 
   routines = signal<Routine[]>([]);
   loading = signal(false);

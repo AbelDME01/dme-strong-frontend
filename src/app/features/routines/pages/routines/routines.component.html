@@ -6,18 +6,7 @@
     </div>
   </div>
 
-  <div class="routines__filters">
-    <div class="routines__segment">
-      <div *ngFor="let f of filters; let i = index"
-           class="routines__seg-item"
-           [class.routines__seg-item--active]="i === activeFilter"
-           (click)="activeFilter = i">
-        {{ f }}
-      </div>
-    </div>
-  </div>
-
-  <div *ngIf="loading()" class="routines__loading">Cargando...</div>
+<div *ngIf="loading()" class="routines__loading">Cargando...</div>
 
   <div *ngIf="error()" class="routines__error">{{ error() }}</div>
 
@@ -34,10 +23,6 @@
           <ds-icon name="dumbbell" [size]="22" [color]="toneColor(toneForIndex(i))"/>
         </div>
         <div class="routines__info">
-          <div class="routines__meta">
-            <ds-badge tone="neutral">PPL</ds-badge>
-            <span class="routines__last">· —</span>
-          </div>
           <div class="routines__name">{{ r.name }}</div>
           <div class="routines__details">
             <span><ds-icon name="dumbbell" [size]="12"/> {{ exerciseCount(r) }} ejercicios</span>

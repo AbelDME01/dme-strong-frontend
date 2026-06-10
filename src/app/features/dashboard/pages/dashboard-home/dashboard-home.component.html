@@ -2,11 +2,33 @@
   <div class="dashboard-home__content-header">
     <div>
       <div class="dashboard-home__date">{{ todayLabel() }}</div>
-      <h1 class="dashboard-home__greeting">Buenas, {{ displayName() }} 👋</h1>
+      <h1 class="dashboard-home__greeting">Buenas, {{ displayName() }}</h1>
     </div>
-    <div class="dashboard-home__header-actions">
-      <ds-button variant="secondary" size="sm" icon="calendar">Semana</ds-button>
-      <ds-button variant="secondary" size="sm" icon="filter">Filtros</ds-button>
+    <div class="dashboard-home__header-actions" style="position:relative">
+      <ds-button variant="secondary" size="sm" icon="calendar" (clicked)="toggleRangePicker()">
+        {{ rangeLabelMap[dateRange()] }}
+      </ds-button>
+      <ds-button variant="secondary" size="sm" icon="filter" (clicked)="toggleFilterPanel()">Filtros</ds-button>
+
+      @if (showRangePicker()) {
+        <div class="dashboard-home__popover">
+          @for (opt of rangeOptions; track opt) {
+            <button class="dashboard-home__popover-item"
+                    [class.dashboard-home__popover-item--active]="dateRange() === opt"
+                    (click)="setRange(opt)">{{ rangeLabelMap[opt] }}</button>
+          }
+        </div>
+      }
+
+      @if (showFilterPanel()) {
+        <div class="dashboard-home__popover dashboard-home__popover--wide">
+          <label class="dashboard-home__filter-label">Nombre del entreno</label>
+          <input class="dashboard-home__filter-input"
+                 [ngModel]="nameFilter()"
+                 (ngModelChange)="nameFilter.set($event)"
+                 placeholder="Buscar…"/>
+        </div>
+      }
     </div>
   </div>
 
@@ -16,19 +38,33 @@
     <div class="dashboard-home__workout-hero">
       <div class="dashboard-home__workout-glow"></div>
       <div class="dashboard-home__workout-hero-content">
-        <div class="dashboard-home__workout-badges">
-          <ds-badge tone="mint">HOY</ds-badge>
-          <ds-badge tone="neutral"><ds-icon name="clock" [size]="10"/> 52 MIN</ds-badge>
-        </div>
-        <h2 class="dashboard-home__workout-title">Empuje · Pecho y tríceps</h2>
-        <p class="dashboard-home__workout-meta">6 ejercicios · 22 series</p>
-        <div class="dashboard-home__exercise-tags">
-          <span *ngFor="let t of exerciseTags" class="dashboard-home__exercise-tag">{{ t }}</span>
-        </div>
-        <div class="dashboard-home__workout-actions">
-          <ds-button size="md" icon="play">Empezar entreno</ds-button>
-          <ds-button size="md" variant="ghost" icon="edit">Editar</ds-button>
-        </div>
+        @if (todayRoutine(); as r) {
+          <div class="dashboard-home__workout-badges">
+            <ds-badge tone="mint">HOY</ds-badge>
+            <ds-badge tone="neutral">{{ (r.routine_exercises?.length ?? 0) }} ejercicios</ds-badge>
+          </div>
+          <h2 class="dashboard-home__workout-title">{{ r.name }}</h2>
+          <p class="dashboard-home__workout-meta">{{ r.description || '' }}</p>
+          @if (todayExerciseTags().length) {
+            <div class="dashboard-home__exercise-tags">
+              @for (t of todayExerciseTags(); track t) {
+                <span class="dashboard-home__exercise-tag">{{ t }}</span>
+              }
+            </div>
+          }
+          <div class="dashboard-home__workout-actions">
+            <ds-button size="md" icon="play" [disabled]="starting()" (clicked)="startWorkout()">
+              {{ starting() ? 'Iniciando…' : 'Empezar entreno' }}
+            </ds-button>
+            <ds-button size="md" variant="ghost" icon="edit" (clicked)="editRoutine()">Editar</ds-button>
+          </div>
+        } @else {
+          <h2 class="dashboard-home__workout-title">Sin rutina todavía</h2>
+          <p class="dashboard-home__workout-meta">Crea tu primera rutina para empezar.</p>
+          <div class="dashboard-home__workout-actions">
+            <ds-button size="md" icon="plus" (clicked)="createRoutine()">Crear rutina</ds-button>
+          </div>
+        }
       </div>
     </div>
 
@@ -36,21 +72,25 @@
     <ds-card [raised]="true" [pad]="20">
       <div class="dashboard-home__streak-label">Racha</div>
       <div class="dashboard-home__streak-row">
-        <div class="dashboard-home__streak-num">12</div>
+        <div class="dashboard-home__streak-num">{{ streak() }}</div>
         <div class="dashboard-home__streak-unit">días</div>
         <ds-icon name="fire" [size]="22" color="var(--dme-coral)" style="margin-left: auto"/>
       </div>
       <div class="dashboard-home__week-days">
-        <div *ngFor="let d of weekDays; let i = index"
-             class="dashboard-home__week-day"
-             [class.dashboard-home__week-day--done]="i < 2"
-             [class.dashboard-home__week-day--today]="i === 2">
-          {{ d }}
-          <ds-icon *ngIf="i < 2" name="check" [size]="10" color="var(--dme-mint)"/>
-          <div *ngIf="i === 2" class="dashboard-home__today-dot"></div>
-        </div>
+        @for (d of weekDays; track d; let i = $index) {
+          <div class="dashboard-home__week-day"
+               [class.dashboard-home__week-day--done]="weekDone()[i]"
+               [class.dashboard-home__week-day--today]="i === todayWeekIndex">
+            {{ d }}
+            @if (weekDone()[i]) {
+              <ds-icon name="check" [size]="10" color="var(--dme-mint)"/>
+            }
+            @if (i === todayWeekIndex && !weekDone()[i]) {
+              <div class="dashboard-home__today-dot"></div>
+            }
+          </div>
+        }
       </div>
-      <p class="dashboard-home__streak-sub">Tu récord personal son 18 días. ¡Sigue así!</p>
     </ds-card>
   </div>
 
@@ -60,27 +100,26 @@
     <ds-card [raised]="true" [pad]="22">
       <div class="dashboard-home__chart-header">
         <div>
-          <div class="dashboard-home__chart-label">Volumen semanal</div>
+          <div class="dashboard-home__chart-label">Volumen {{ rangeLabelMap[dateRange()].toLowerCase() }}</div>
           <div class="dashboard-home__chart-value-row">
-            <span class="dashboard-home__chart-value">18.4</span>
-            <span class="dashboard-home__chart-unit">toneladas</span>
-            <span class="dashboard-home__chart-trend"><ds-icon name="trend" [size]="13" color="var(--dme-mint)"/> +12%</span>
+            <span class="dashboard-home__chart-value">{{ weekVolumeLabel() }}</span>
           </div>
-        </div>
-        <div class="dashboard-home__chart-ranges">
-          <span *ngFor="let r of ['4s','12s','6m']; let i = index"
-                class="dashboard-home__range" [class.dashboard-home__range--active]="i === 1">{{ r }}</span>
         </div>
       </div>
       <div class="dashboard-home__bars">
-        <div *ngFor="let v of volumeBars(); let i = index" class="dashboard-home__bar-col">
-          <div class="dashboard-home__bar"
-               [class.dashboard-home__bar--latest]="i === volumeBars().length - 1"
-               [style.height.%]="barPct(v)">
+        @for (v of chartBars(); track $index; let i = $index) {
+          <div class="dashboard-home__bar-col">
+            <div class="dashboard-home__bar"
+                 [class.dashboard-home__bar--latest]="i === chartBars().length - 1"
+                 [style.height.%]="barPct(v)">
+            </div>
+            <span class="dashboard-home__bar-label"
+                  [class.dashboard-home__bar-label--latest]="i === chartBars().length - 1">S{{ i + 1 }}</span>
           </div>
-          <span class="dashboard-home__bar-label" [class.dashboard-home__bar-label--latest]="i === volumeBars().length - 1">S{{ i + 1 }}</span>
-        </div>
-        <div *ngIf="!loading() && volumeBars().length === 0" class="dashboard-home__empty">Sin datos de volumen todavía.</div>
+        }
+        @if (!loading() && chartBars().length === 0) {
+          <div class="dashboard-home__empty">Sin datos de volumen todavía.</div>
+        }
       </div>
     </ds-card>
 
@@ -91,16 +130,18 @@
         <ds-icon name="trophy" [size]="16" color="var(--dme-amber)"/>
       </div>
       <div class="dashboard-home__prs-list">
-        <div *ngFor="let pr of recentPRs(); let last = last"
-             class="dashboard-home__pr-item"
-             [class.dashboard-home__pr-item--last]="last">
-          <div>
-            <div class="dashboard-home__pr-name">{{ pr.exercise }}</div>
-            <div class="dashboard-home__pr-date">{{ pr.date }}</div>
+        @for (pr of recentPRs(); track pr.exercise; let last = $last) {
+          <div class="dashboard-home__pr-item" [class.dashboard-home__pr-item--last]="last">
+            <div>
+              <div class="dashboard-home__pr-name">{{ pr.exercise }}</div>
+              <div class="dashboard-home__pr-date">{{ pr.date }}</div>
+            </div>
+            <div class="dashboard-home__pr-weight">{{ pr.weight }}</div>
           </div>
-          <div class="dashboard-home__pr-weight">{{ pr.weight }}</div>
-        </div>
-        <div *ngIf="!loading() && recentPRs().length === 0" class="dashboard-home__empty">Aún no hay récords.</div>
+        }
+        @if (!loading() && recentPRs().length === 0) {
+          <div class="dashboard-home__empty">Aún no hay récords.</div>
+        }
       </div>
     </ds-card>
   </div>
@@ -109,29 +150,37 @@
   <div class="dashboard-home__table-section">
     <div class="dashboard-home__table-header">
       <span class="dashboard-home__table-title">Entrenamientos recientes</span>
-      <span class="dashboard-home__table-link">Ver todo →</span>
+      <span class="dashboard-home__table-link" (click)="goToHistory()" style="cursor:pointer">Ver todo →</span>
     </div>
     <ds-card [pad]="0">
       <div class="dashboard-home__table-head">
         <span>Fecha</span><span>Entreno</span><span>Volumen</span><span>Series</span><span>Duración</span><span></span>
       </div>
-      <div *ngFor="let r of recentWorkouts(); let last = last"
-           class="dashboard-home__table-row"
-           [class.dashboard-home__table-row--last]="last">
-        <span class="dashboard-home__table-date">{{ r.date }}</span>
-        <span class="dashboard-home__table-name">
-          <div class="dashboard-home__table-icon"><ds-icon name="dumbbell" [size]="14" color="var(--dme-mint)"/></div>
-          {{ r.name }}
-          <ds-badge *ngIf="r.prs > 0" tone="amber"><ds-icon name="trophy" [size]="9"/> {{ r.prs }} PR</ds-badge>
-        </span>
-        <span class="dashboard-home__table-mono">{{ r.vol }}</span>
-        <span class="dashboard-home__table-dim">{{ r.sets }}</span>
-        <span class="dashboard-home__table-dim">{{ r.time }}</span>
-        <ds-icon name="chevron" [size]="14" color="var(--dme-text-mute)"/>
-      </div>
-      <div *ngIf="loading()" class="dashboard-home__empty dashboard-home__empty--row">Cargando…</div>
-      <div *ngIf="error()" class="dashboard-home__empty dashboard-home__empty--row" role="alert">{{ error() }}</div>
-      <div *ngIf="!loading() && !error() && recentWorkouts().length === 0" class="dashboard-home__empty dashboard-home__empty--row">Sin entrenamientos registrados.</div>
+      @for (r of filteredWorkouts(); track r.id; let last = $last) {
+        <div class="dashboard-home__table-row"
+             [class.dashboard-home__table-row--last]="last"
+             (click)="goToWorkout(r)"
+             style="cursor:pointer">
+          <span class="dashboard-home__table-date">{{ r.date }}</span>
+          <span class="dashboard-home__table-name">
+            <div class="dashboard-home__table-icon"><ds-icon name="dumbbell" [size]="14" color="var(--dme-mint)"/></div>
+            {{ r.name }}
+          </span>
+          <span class="dashboard-home__table-mono">{{ r.vol }}</span>
+          <span class="dashboard-home__table-dim">{{ r.sets }}</span>
+          <span class="dashboard-home__table-dim">{{ r.time }}</span>
+          <ds-icon name="chevron" [size]="14" color="var(--dme-text-mute)"/>
+        </div>
+      }
+      @if (loading()) {
+        <div class="dashboard-home__empty dashboard-home__empty--row">Cargando…</div>
+      }
+      @if (error()) {
+        <div class="dashboard-home__empty dashboard-home__empty--row" role="alert">{{ error() }}</div>
+      }
+      @if (!loading() && !error() && filteredWorkouts().length === 0) {
+        <div class="dashboard-home__empty dashboard-home__empty--row">Sin entrenamientos registrados.</div>
+      }
     </ds-card>
   </div>
 </div>

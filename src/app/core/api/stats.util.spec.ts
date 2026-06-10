@@ -3,6 +3,9 @@ import {
   exerciseProgression,
   recentSetsForExercise,
   totalSets,
+  streakDays,
+  computeWeekDone,
+  weekVolume,
 } from './stats.util';
 import { Workout, WorkoutSet } from './models';
 
@@ -104,6 +107,70 @@ describe('stats.util', () => {
         workout({ workout_sets: [set({})] }),
       ];
       expect(totalSets(workouts)).toBe(3);
+    });
+  });
+
+  describe('streakDays', () => {
+    it('returns 0 when no workouts', () => {
+      expect(streakDays([])).toBe(0);
+    });
+
+    it('counts consecutive days ending today', () => {
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      const twoDaysAgo = new Date(today);
+      twoDaysAgo.setDate(today.getDate() - 2);
+      const workouts = [
+        workout({ started_at: today.toISOString() }),
+        workout({ started_at: yesterday.toISOString() }),
+        workout({ started_at: twoDaysAgo.toISOString() }),
+      ];
+      expect(streakDays(workouts)).toBe(3);
+    });
+
+    it('stops at a gap', () => {
+      const today = new Date();
+      const twoDaysAgo = new Date(today);
+      twoDaysAgo.setDate(today.getDate() - 2);
+      const workouts = [
+        workout({ started_at: today.toISOString() }),
+        workout({ started_at: twoDaysAgo.toISOString() }),
+      ];
+      // Gap yesterday → streak is 1 (only today)
+      expect(streakDays(workouts)).toBe(1);
+    });
+  });
+
+  describe('computeWeekDone', () => {
+    it('marks days with workouts in current week, Mon=0', () => {
+      const monday = new Date();
+      monday.setHours(0, 0, 0, 0);
+      monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+      const result = computeWeekDone([workout({ started_at: monday.toISOString() })]);
+      expect(result[0]).toBe(true);
+      expect(result.slice(1).every((v) => !v)).toBe(true);
+    });
+
+    it('ignores workouts outside the current week', () => {
+      const lastWeek = new Date();
+      lastWeek.setDate(lastWeek.getDate() - 8);
+      expect(computeWeekDone([workout({ started_at: lastWeek.toISOString() })])).toEqual(
+        [false, false, false, false, false, false, false],
+      );
+    });
+  });
+
+  describe('weekVolume', () => {
+    it('sums volume only for workouts in current week', () => {
+      const today = new Date();
+      const lastWeek = new Date(today);
+      lastWeek.setDate(today.getDate() - 8);
+      const workouts = [
+        workout({ started_at: today.toISOString(), workout_sets: [set({ weight_kg: 100, reps: 5 })] }),
+        workout({ started_at: lastWeek.toISOString(), workout_sets: [set({ weight_kg: 100, reps: 5 })] }),
+      ];
+      expect(weekVolume(workouts)).toBe(500);
     });
   });
 });

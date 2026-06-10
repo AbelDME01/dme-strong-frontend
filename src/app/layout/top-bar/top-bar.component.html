@@ -1,8 +1,31 @@
 <div class="top-bar">
-  <div class="top-bar__search">
+  <div class="top-bar__search" style="position:relative">
     <ds-icon name="search" [size]="15" color="var(--dme-text-mute)"/>
-    <span class="top-bar__search-placeholder">Buscar ejercicios, rutinas…</span>
+    <input class="top-bar__search-input"
+           [value]="query()"
+           (input)="onQueryChange($any($event.target).value)"
+           (focus)="query().trim() && showDropdown.set(true)"
+           placeholder="Buscar ejercicios, rutinas…"
+           autocomplete="off"/>
     <div class="top-bar__kbd">⌘K</div>
+
+    @if (showDropdown()) {
+      <div class="top-bar__dropdown" (click)="$event.stopPropagation()">
+        @if (searching()) {
+          <div class="top-bar__dropdown-empty">Buscando…</div>
+        } @else if (results().length === 0) {
+          <div class="top-bar__dropdown-empty">Sin resultados</div>
+        } @else {
+          @for (r of results(); track r.id) {
+            <button class="top-bar__result" (click)="selectResult(r)">
+              <span class="top-bar__result-type">{{ r.type === 'routine' ? 'Rutina' : 'Ejercicio' }}</span>
+              <span class="top-bar__result-name">{{ r.name }}</span>
+              <span class="top-bar__result-sub">{{ r.sub }}</span>
+            </button>
+          }
+        }
+      </div>
+    }
   </div>
   <div class="top-bar__spacer"></div>
   <div class="top-bar__bell">

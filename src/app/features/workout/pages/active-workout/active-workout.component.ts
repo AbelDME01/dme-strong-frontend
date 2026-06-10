@@ -136,8 +136,8 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
       if (!seen.has(s.exercise_id)) {
         seen.set(s.exercise_id, {
           exerciseId: s.exercise_id,
-          name: 'Ejercicio',
-          muscleGroup: '',
+          name: s.exercise?.name ?? 'Ejercicio',
+          muscleGroup: s.exercise?.muscle_group ?? '',
           targetSets: null,
           targetReps: null,
         });
