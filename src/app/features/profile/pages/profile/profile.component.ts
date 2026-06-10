@@ -5,7 +5,6 @@ import { DsBadgeComponent } from '../../../../shared/components/ds-badge/ds-badg
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
-import { DsTabBarComponent } from '../../../../shared/components/ds-tab-bar/ds-tab-bar.component';
 import { UsersService } from '../../../../core/api/users.service';
 import { MeasurementsService } from '../../../../core/api/measurements.service';
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -14,7 +13,7 @@ import { UserProfile, Measurement } from '../../../../core/api/models';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, DsBadgeComponent, DsButtonComponent, DsCardComponent, DsIconComponent, DsTabBarComponent],
+  imports: [CommonModule, DsBadgeComponent, DsButtonComponent, DsCardComponent, DsIconComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })

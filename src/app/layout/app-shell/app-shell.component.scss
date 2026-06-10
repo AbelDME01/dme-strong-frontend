@@ -1,0 +1,39 @@
+@use 'theme/breakpoints' as bp;
+
+.shell {
+  min-height: 100dvh;
+  background: var(--dme-bg);
+
+  // En desktop: sidebar fija a la izquierda y contenido con scroll propio.
+  @include bp.desktop-up {
+    display: flex;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  &__main {
+    @include bp.desktop-up {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+  }
+
+  &__content {
+    display: block;
+
+    @include bp.desktop-up {
+      flex: 1;
+      overflow-y: auto;
+    }
+  }
+
+  // La tab-bar es chrome de móvil/tablet; en desktop la sustituye la side-nav.
+  &__tabbar {
+    @include bp.desktop-up {
+      display: none;
+    }
+  }
+}

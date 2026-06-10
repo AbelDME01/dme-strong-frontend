@@ -1,0 +1,12 @@
+<div class="shell">
+  <app-side-nav/>
+  <div class="shell__main">
+    <app-top-bar/>
+    <main class="shell__content">
+      <router-outlet/>
+    </main>
+  </div>
+  @if (showTabBar()) {
+    <ds-tab-bar class="shell__tabbar"/>
+  }
+</div>

@@ -4,7 +4,8 @@ import { DsBadgeComponent } from '../../../../shared/components/ds-badge/ds-badg
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
-import { DsTabBarComponent } from '../../../../shared/components/ds-tab-bar/ds-tab-bar.component';
+import { DashboardHomeComponent } from '../../../dashboard/pages/dashboard-home/dashboard-home.component';
+import { ViewportService } from '../../../../core/viewport/viewport.service';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { RecordsService } from '../../../../core/api/records.service';
 import { RoutinesService } from '../../../../core/api/routines.service';
@@ -25,11 +26,13 @@ interface TodayRoutine {
 @Component({
   selector: 'app-home-a',
   standalone: true,
-  imports: [CommonModule, DsBadgeComponent, DsButtonComponent, DsCardComponent, DsIconComponent, DsTabBarComponent],
+  imports: [CommonModule, DsBadgeComponent, DsButtonComponent, DsCardComponent, DsIconComponent, DashboardHomeComponent],
   templateUrl: './home-a.component.html',
   styleUrl: './home-a.component.scss',
 })
 export class HomeAComponent implements OnInit {
+  readonly vp = inject(ViewportService);
+
   private workoutsService = inject(WorkoutsService);
   private recordsService = inject(RecordsService);
   private routinesService = inject(RoutinesService);

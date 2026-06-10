@@ -1,8 +1,12 @@
+@use 'theme/breakpoints' as bp;
+
 .routines {
   padding: 62px 20px 110px;
   background: var(--dme-bg);
   min-height: 100dvh;
   position: relative;
+
+  @include bp.page-desktop(1100px);
 
   &__header {
     display: flex;
@@ -71,6 +75,16 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    @include bp.tablet-up {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @include bp.desktop-up {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   &__item {

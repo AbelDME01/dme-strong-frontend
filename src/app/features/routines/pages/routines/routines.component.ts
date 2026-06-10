@@ -5,7 +5,6 @@ import { DsBadgeComponent } from '../../../../shared/components/ds-badge/ds-badg
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
-import { DsTabBarComponent } from '../../../../shared/components/ds-tab-bar/ds-tab-bar.component';
 import { RoutinesService } from '../../../../core/api/routines.service';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { Routine } from '../../../../core/api/models';
@@ -13,7 +12,7 @@ import { Routine } from '../../../../core/api/models';
 @Component({
   selector: 'app-routines',
   standalone: true,
-  imports: [CommonModule, DsBadgeComponent, DsButtonComponent, DsCardComponent, DsIconComponent, DsTabBarComponent],
+  imports: [CommonModule, DsBadgeComponent, DsButtonComponent, DsCardComponent, DsIconComponent],
   templateUrl: './routines.component.html',
   styleUrl: './routines.component.scss',
 })

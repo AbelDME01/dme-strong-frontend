@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { WebDashboardComponent } from './web-dashboard.component';
+import { DashboardHomeComponent } from './dashboard-home.component';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { RecordsService } from '../../../../core/api/records.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 
-describe('WebDashboardComponent', () => {
+describe('DashboardHomeComponent', () => {
   function setup(workouts: unknown[], records: unknown[] = []) {
     const workoutsStub = jasmine.createSpyObj<WorkoutsService>('WorkoutsService', ['getRecentWithSets']);
     const recordsStub = jasmine.createSpyObj<RecordsService>('RecordsService', ['getAll']);
@@ -13,14 +13,14 @@ describe('WebDashboardComponent', () => {
     recordsStub.getAll.and.returnValue(of(records) as never);
 
     TestBed.configureTestingModule({
-      imports: [WebDashboardComponent],
+      imports: [DashboardHomeComponent],
       providers: [
         { provide: WorkoutsService, useValue: workoutsStub },
         { provide: RecordsService, useValue: recordsStub },
         { provide: AuthService, useValue: { user: () => ({ email: 'ruben@dme.app', user_metadata: { full_name: 'Rubén García' } }) } },
       ],
     });
-    return TestBed.createComponent(WebDashboardComponent);
+    return TestBed.createComponent(DashboardHomeComponent);
   }
 
   afterEach(() => TestBed.resetTestingModule());

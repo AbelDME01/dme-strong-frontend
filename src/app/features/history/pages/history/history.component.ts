@@ -2,7 +2,6 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
-import { DsTabBarComponent } from '../../../../shared/components/ds-tab-bar/ds-tab-bar.component';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { Workout } from '../../../../core/api/models';
 
@@ -21,7 +20,7 @@ interface WorkoutRow {
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, DsCardComponent, DsIconComponent, DsTabBarComponent],
+  imports: [CommonModule, DsCardComponent, DsIconComponent],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })

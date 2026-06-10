@@ -1,3 +1,6 @@
+@if (vp.isDesktop()) {
+  <app-dashboard-home/>
+} @else {
 <div class="home">
   <!-- Header -->
   <div class="home__header">
@@ -82,5 +85,4 @@
     </ds-card>
   </div>
 </div>
-
-<ds-tab-bar active="home"/>
+}

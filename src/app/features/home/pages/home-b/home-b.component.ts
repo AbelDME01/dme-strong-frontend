@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
 import { DsLogoComponent } from '../../../../shared/components/ds-logo/ds-logo.component';
-import { DsTabBarComponent } from '../../../../shared/components/ds-tab-bar/ds-tab-bar.component';
 
 @Component({
   selector: 'app-home-b',
   standalone: true,
-  imports: [CommonModule, DsCardComponent, DsIconComponent, DsLogoComponent, DsTabBarComponent],
+  imports: [CommonModule, DsCardComponent, DsIconComponent, DsLogoComponent],
   templateUrl: './home-b.component.html',
   styleUrl: './home-b.component.scss',
 })
