@@ -1,7 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { DsButtonComponent } from '../../shared/components/ds-button/ds-button.component';
 import { DsIconComponent } from '../../shared/components/ds-icon/ds-icon.component';
 import { DsLogoComponent } from '../../shared/components/ds-logo/ds-logo.component';
 import { AuthService } from '../../core/auth/auth.service';
@@ -15,7 +14,7 @@ interface NavItem {
 @Component({
   selector: 'app-side-nav',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, DsButtonComponent, DsIconComponent, DsLogoComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, DsIconComponent, DsLogoComponent],
   templateUrl: './side-nav.component.html',
   styleUrl: './side-nav.component.scss',
 })

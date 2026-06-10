@@ -1,5 +1,5 @@
 <div class="top-bar">
-  <div class="top-bar__search" style="position:relative">
+  <div class="top-bar__search" style="position:relative" (click)="$event.stopPropagation()">
     <ds-icon name="search" [size]="15" color="var(--dme-text-mute)"/>
     <input class="top-bar__search-input"
            [value]="query()"
@@ -28,9 +28,33 @@
     }
   </div>
   <div class="top-bar__spacer"></div>
-  <div class="top-bar__bell">
+  <div class="top-bar__bell" (click)="toggleNotifications(); $event.stopPropagation()">
     <ds-icon name="bell" [size]="16" color="var(--dme-text)"/>
-    <div class="top-bar__bell-dot"></div>
+    @if (hasUnread()) {
+      <div class="top-bar__bell-dot"></div>
+    }
+    @if (notificationsOpen()) {
+      <div class="top-bar__notifications-panel" (click)="$event.stopPropagation()">
+        <div class="top-bar__notif-header">Notificaciones</div>
+        @if (notifications.length === 0) {
+          <div class="top-bar__notif-empty">Sin notificaciones</div>
+        } @else {
+          @for (n of notifications; track n.title) {
+            <div class="top-bar__notif-item">
+              <div class="top-bar__notif-icon">
+                <ds-icon [name]="n.icon" [size]="16" color="var(--dme-mint)"/>
+              </div>
+              <div class="top-bar__notif-body">
+                <div class="top-bar__notif-title">{{ n.title }}</div>
+                <div class="top-bar__notif-time">{{ n.time }}</div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
   </div>
-  <ds-button size="sm" icon="plus" (clicked)="startWorkout()">Nuevo entreno</ds-button>
+  <ds-button size="sm" icon="plus" [disabled]="startingWorkout()" (clicked)="startWorkout()">
+    {{ startingWorkout() ? 'Iniciando…' : 'Nuevo entreno' }}
+  </ds-button>
 </div>

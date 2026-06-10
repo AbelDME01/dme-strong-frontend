@@ -31,10 +31,26 @@ export class HistoryComponent implements OnInit {
 
   rawWorkouts = signal<Workout[]>([]);
   loading = signal(false);
+  showFilters = signal(false);
+  activePeriod = signal<'all' | 'week' | 'month' | '3m'>('all');
 
-  workouts = computed<WorkoutRow[]>(() =>
-    this.rawWorkouts().map((w) => this.toRow(w))
-  );
+  readonly periods: { key: 'all' | 'week' | 'month' | '3m'; label: string }[] = [
+    { key: 'all', label: 'Todo' },
+    { key: 'week', label: 'Semana' },
+    { key: 'month', label: 'Mes' },
+    { key: '3m', label: '3 meses' },
+  ];
+
+  workouts = computed<WorkoutRow[]>(() => {
+    const period = this.activePeriod();
+    let list = this.rawWorkouts();
+    if (period !== 'all') {
+      const days = period === 'week' ? 7 : period === 'month' ? 30 : 90;
+      const cutoff = Date.now() - days * 86400000;
+      list = list.filter((w) => new Date(w.started_at).getTime() >= cutoff);
+    }
+    return list.map((w) => this.toRow(w));
+  });
 
   monthLabel = computed(() => {
     const label = new Date().toLocaleDateString('es-ES', {

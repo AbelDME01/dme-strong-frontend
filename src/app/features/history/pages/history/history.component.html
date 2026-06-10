@@ -2,8 +2,20 @@
   <div class="history__header">
     <h1 class="history__title">Historial</h1>
     <div class="history__actions">
-      <div class="history__action-btn"><ds-icon name="filter" [size]="18" color="var(--dme-text)"/></div>
-      <div class="history__action-btn"><ds-icon name="calendar" [size]="18" color="var(--dme-text)"/></div>
+      <div class="history__action-btn"
+           [class.history__action-btn--active]="showFilters()"
+           (click)="showFilters.set(!showFilters())">
+        <ds-icon name="filter" [size]="18" color="var(--dme-text)"/>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showFilters()" class="history__filters">
+    <div class="history__segment">
+      <div *ngFor="let p of periods"
+           class="history__seg-item"
+           [class.history__seg-item--active]="p.key === activePeriod()"
+           (click)="activePeriod.set(p.key)">{{ p.label }}</div>
     </div>
   </div>
 

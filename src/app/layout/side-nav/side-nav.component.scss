@@ -21,7 +21,7 @@
   flex-direction: column;
   overflow-y: auto;
 
-  &__logo { padding: 0 10px 24px; }
+  &__logo { padding: 0 10px 24px; cursor: pointer; }
 
   &__label {
     padding: 0 6px 12px;
@@ -57,29 +57,6 @@
   }
 
   &__footer { margin-top: auto; }
-
-  &__pro-card {
-    padding: 14px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #0E2420 0%, #1A3831 100%);
-    border: 1px solid var(--dme-mint-soft);
-  }
-
-  &__pro-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--dme-mint);
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-  }
-
-  &__pro-desc {
-    font-size: 13px;
-    font-weight: 600;
-    margin-top: 6px;
-    line-height: 1.4;
-    color: var(--dme-text);
-  }
 
   &__user {
     display: flex;

@@ -12,7 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 8px;
+    margin-top: 24px;
   }
 
   &__title {
@@ -35,6 +35,47 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    &--active {
+      background: var(--dme-surface3);
+      border-color: var(--dme-mint);
+    }
+  }
+
+  &__filters {
+    margin-top: 14px;
+    overflow-x: auto;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__segment {
+    display: inline-flex;
+    background: var(--dme-surface2);
+    border-radius: 14px;
+    padding: 4px;
+    gap: 2px;
+    border: 1px solid var(--dme-border);
+    min-width: max-content;
+  }
+
+  &__seg-item {
+    height: 32px;
+    padding: 0 16px;
+    border-radius: 10px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    color: var(--dme-text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    &--active {
+      background: var(--dme-surface3);
+      color: var(--dme-text);
+    }
   }
 
   &__month-hero {
