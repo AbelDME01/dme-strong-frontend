@@ -1,5 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { DsBadgeComponent } from '../../../../shared/components/ds-badge/ds-badge.component';
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
@@ -11,6 +12,7 @@ import { RecordsService } from '../../../../core/api/records.service';
 import { RoutinesService } from '../../../../core/api/routines.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { PersonalRecord, Workout } from '../../../../core/api/models';
+import { weekVolume, computeWeekDone, streakDays } from '../../../../core/api/stats.util';
 
 interface PrRow {
   exercise: string;
@@ -19,6 +21,7 @@ interface PrRow {
 }
 
 interface TodayRoutine {
+  routineId: string;
   name: string;
   meta: string;
 }
@@ -37,15 +40,16 @@ export class HomeAComponent implements OnInit {
   private recordsService = inject(RecordsService);
   private routinesService = inject(RoutinesService);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   dayNumbers = this.buildWeekNumbers();
   todayIndex = (new Date().getDay() + 6) % 7;
 
-  workoutCount = signal<number>(0);
   prs = signal<PrRow[]>([]);
   todayRoutine = signal<TodayRoutine | null>(null);
   weekDone = signal<boolean[]>([false, false, false, false, false, false, false]);
+  starting = signal(false);
 
   stats = signal([
     { label: 'Entrenamientos', value: '0', trend: '' },
@@ -64,15 +68,7 @@ export class HomeAComponent implements OnInit {
 
   ngOnInit(): void {
     this.workoutsService.getAll().subscribe({
-      next: (data) => {
-        this.workoutCount.set(data.length);
-        this.stats.update((s) => [
-          { ...s[0], value: String(data.length) },
-          s[1],
-          s[2],
-        ]);
-        this.weekDone.set(this.computeWeekDone(data));
-      },
+      next: (data) => this.applyWorkoutStats(data),
       error: (err) => console.error(err),
     });
 
@@ -87,6 +83,7 @@ export class HomeAComponent implements OnInit {
           const r = routines[0];
           const count = r.routine_exercises?.length ?? 0;
           this.todayRoutine.set({
+            routineId: r.id,
             name: r.name,
             meta: `${count} ${count === 1 ? 'ejercicio' : 'ejercicios'}`,
           });
@@ -98,22 +95,50 @@ export class HomeAComponent implements OnInit {
     });
   }
 
-  /** Marks the weekday (Mon=0..Sun=6) of each workout done in the current week. */
-  private computeWeekDone(workouts: Workout[]): boolean[] {
-    const done = [false, false, false, false, false, false, false];
-    const monday = new Date();
-    monday.setHours(0, 0, 0, 0);
-    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-    for (const w of workouts) {
-      const d = new Date(w.started_at);
-      const idx = (d.getDay() + 6) % 7;
-      if (d >= monday) done[idx] = true;
-    }
-    return done;
+  startWorkout(): void {
+    const routine = this.todayRoutine();
+    if (!routine || this.starting()) return;
+    this.starting.set(true);
+    this.workoutsService.create({ name: routine.name, routineId: routine.routineId }).subscribe({
+      next: (workout) => {
+        this.starting.set(false);
+        this.router.navigate(['/workout/active'], { queryParams: { id: workout.id } });
+      },
+      error: (err) => {
+        this.starting.set(false);
+        console.error(err);
+      },
+    });
+  }
+
+  editRoutine(): void {
+    const routine = this.todayRoutine();
+    if (!routine) return;
+    this.router.navigate(['/routines/builder'], { queryParams: { id: routine.routineId } });
+  }
+
+  createRoutine(): void {
+    this.router.navigate(['/routines/builder']);
+  }
+
+  goToHistory(): void {
+    this.router.navigate(['/history']);
+  }
+
+  private applyWorkoutStats(data: Workout[]): void {
+    const vol = weekVolume(data);
+    const volLabel = vol >= 1000 ? `${(vol / 1000).toFixed(1)}t` : `${Math.round(vol)} kg`;
+    const streak = streakDays(data);
+    this.weekDone.set(computeWeekDone(data));
+    this.stats.set([
+      { label: 'Entrenamientos', value: String(data.length), trend: '' },
+      { label: 'Volumen sem.', value: volLabel, trend: '' },
+      { label: 'Racha', value: String(streak), trend: 'días' },
+    ]);
   }
 
   private toPrRow(r: PersonalRecord): PrRow {
-    const exercise = r.exercises?.name ?? r.exercise?.name ?? 'Ejercicio';
+    const exercise = r.exercises?.name ?? r.exercise?.name ?? '—';
     const weight = `${r.value} ${r.unit}`;
     const date = this.relativeDate(new Date(r.achieved_at));
     return { exercise, weight, date };

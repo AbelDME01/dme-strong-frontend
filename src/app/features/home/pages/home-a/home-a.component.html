@@ -24,8 +24,10 @@
       <h2 class="home__workout-title">{{ routine.name }}</h2>
       <p class="home__workout-meta">{{ routine.meta }}</p>
       <div class="home__workout-actions">
-        <ds-button size="md" icon="play" [full]="false">Empezar entreno</ds-button>
-        <div class="home__workout-more">
+        <ds-button size="md" icon="play" [full]="false" [disabled]="starting()" (clicked)="startWorkout()">
+          {{ starting() ? 'Iniciando…' : 'Empezar entreno' }}
+        </ds-button>
+        <div class="home__workout-more" (click)="editRoutine()" style="cursor:pointer">
           <ds-icon name="more" [size]="20" color="var(--dme-text)"/>
         </div>
       </div>
@@ -34,7 +36,7 @@
       <h2 class="home__workout-title">Sin rutina todavía</h2>
       <p class="home__workout-meta">Crea tu primera rutina para empezar.</p>
       <div class="home__workout-actions">
-        <ds-button size="md" icon="plus" [full]="false">Crear rutina</ds-button>
+        <ds-button size="md" icon="plus" [full]="false" (clicked)="createRoutine()">Crear rutina</ds-button>
       </div>
     </ng-template>
   </div>
@@ -52,7 +54,7 @@
   <div class="home__week">
     <div class="home__week-header">
       <span class="home__week-title">Esta semana</span>
-      <span class="home__week-link">Ver todo</span>
+      <span class="home__week-link" (click)="goToHistory()" style="cursor:pointer">Ver todo</span>
     </div>
     <div class="home__week-days">
       <div *ngFor="let d of days; let i = index"

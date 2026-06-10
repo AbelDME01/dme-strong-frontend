@@ -17,7 +17,6 @@ export const routes: Routes = [
     loadComponent: () => import('./layout/app-shell/app-shell.component').then(m => m.AppShellComponent),
     children: [
       { path: 'home',   loadComponent: () => import('./features/home/pages/home-a/home-a.component').then(m => m.HomeAComponent) },
-      { path: 'home-b', loadComponent: () => import('./features/home/pages/home-b/home-b.component').then(m => m.HomeBComponent) },
       {
         path: 'routines',
         children: [
