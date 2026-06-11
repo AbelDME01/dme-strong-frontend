@@ -92,10 +92,6 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  openSettings(): void {
-    this.router.navigate(['/profile/edit']);
-  }
-
   private showSnackbar(msg: string): void {
     if (this.snackbarTimer) clearTimeout(this.snackbarTimer);
     this.snackbar.set(msg);

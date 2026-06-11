@@ -67,7 +67,9 @@ export class HomeAComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.workoutsService.getAll().subscribe({
+    // The list endpoint omits workout_sets, so volume would always be 0:
+    // hydrate the recent workouts to compute the weekly volume correctly.
+    this.workoutsService.getRecentWithSets().subscribe({
       next: (data) => this.applyWorkoutStats(data),
       error: (err) => console.error(err),
     });
