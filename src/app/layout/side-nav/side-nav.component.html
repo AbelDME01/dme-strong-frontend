@@ -1,5 +1,5 @@
 <aside class="side-nav">
-  <div class="side-nav__logo">
+  <div class="side-nav__logo" [routerLink]="'/home'">
     <ds-logo [size]="26"/>
   </div>
 
@@ -16,11 +16,6 @@
   </nav>
 
   <div class="side-nav__footer">
-    <div class="side-nav__pro-card">
-      <div class="side-nav__pro-title">PRO</div>
-      <div class="side-nav__pro-desc">Análisis ilimitados y rutinas IA</div>
-      <ds-button size="sm" [full]="true" style="margin-top: 10px">Mejorar plan</ds-button>
-    </div>
     <a class="side-nav__user" routerLink="/profile">
       <div class="side-nav__user-avatar">{{ avatarInitial() }}</div>
       <div class="side-nav__user-info">

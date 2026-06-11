@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
@@ -24,6 +24,26 @@ export class RoutinesComponent implements OnInit {
   loading = signal(false);
   error = signal<string | null>(null);
   startingId = signal<string | null>(null);
+  activeFilter = signal<string>('Todas');
+
+  muscleGroups = computed<string[]>(() => {
+    const groups = new Set<string>();
+    for (const r of this.routines()) {
+      for (const re of r.routine_exercises ?? []) {
+        const mg = re.exercise?.muscle_group;
+        if (mg) groups.add(mg);
+      }
+    }
+    return ['Todas', ...Array.from(groups).sort()];
+  });
+
+  filteredRoutines = computed<Routine[]>(() => {
+    const filter = this.activeFilter();
+    if (filter === 'Todas') return this.routines();
+    return this.routines().filter((r) =>
+      r.routine_exercises?.some((re) => re.exercise?.muscle_group === filter)
+    );
+  });
 
   ngOnInit(): void {
     this.loadRoutines();

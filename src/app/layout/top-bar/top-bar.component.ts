@@ -18,6 +18,12 @@ interface SearchResult {
   sub: string;
 }
 
+interface Notification {
+  icon: string;
+  title: string;
+  time: string;
+}
+
 @Component({
   selector: 'app-top-bar',
   standalone: true,
@@ -35,6 +41,15 @@ export class TopBarComponent {
   results = signal<SearchResult[]>([]);
   showDropdown = signal(false);
   searching = signal(false);
+  startingWorkout = signal(false);
+  notificationsOpen = signal(false);
+  hasUnread = signal(true);
+
+  notifications: Notification[] = [
+    { icon: 'trophy', title: 'Nuevo récord en Press Banca', time: 'hace 2 h' },
+    { icon: 'dumbbell', title: 'Entreno de Pecho completado', time: 'hace 1 d' },
+    { icon: 'star', title: '¡7 días seguidos entrenando!', time: 'hace 3 d' },
+  ];
 
   private search$ = new Subject<string>();
   private routineCache: Routine[] = [];
@@ -104,13 +119,37 @@ export class TopBarComponent {
     this.showDropdown.set(false);
   }
 
+  toggleNotifications(): void {
+    const opening = !this.notificationsOpen();
+    this.notificationsOpen.set(opening);
+    if (opening) this.hasUnread.set(false);
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.showDropdown.set(false);
+    this.notificationsOpen.set(false);
+  }
+
   @HostListener('document:keydown.escape')
   onEscape(): void {
     this.showDropdown.set(false);
+    this.notificationsOpen.set(false);
     this.query.set('');
   }
 
   startWorkout(): void {
-    this.router.navigate(['/routines']);
+    if (this.startingWorkout()) return;
+    this.startingWorkout.set(true);
+    this.workoutsService.create({ name: 'Entreno libre' }).subscribe({
+      next: (workout) => {
+        this.startingWorkout.set(false);
+        this.router.navigate(['/workout/active'], { queryParams: { id: workout.id } });
+      },
+      error: (err) => {
+        this.startingWorkout.set(false);
+        console.error('Error al iniciar entreno libre:', err);
+      },
+    });
   }
 }

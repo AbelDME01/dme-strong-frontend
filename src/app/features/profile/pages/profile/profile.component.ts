@@ -80,6 +80,28 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  snackbar = signal<string | null>(null);
+  private snackbarTimer: ReturnType<typeof setTimeout> | null = null;
+
+  onMenuItem(m: Record<string, unknown>): void {
+    const route = m['route'];
+    if (typeof route === 'string') {
+      this.router.navigate([route]);
+    } else {
+      this.showSnackbar('Próximamente');
+    }
+  }
+
+  openSettings(): void {
+    this.router.navigate(['/profile/edit']);
+  }
+
+  private showSnackbar(msg: string): void {
+    if (this.snackbarTimer) clearTimeout(this.snackbarTimer);
+    this.snackbar.set(msg);
+    this.snackbarTimer = setTimeout(() => this.snackbar.set(null), 2000);
+  }
+
   async signOut(): Promise<void> {
     await this.authService.signOut();
     await this.router.navigate(['/auth/login']);

@@ -160,4 +160,27 @@
     color: var(--dme-text-dim);
     font-weight: 500;
   }
+
+  &__snackbar {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--dme-surface3);
+    border: 1px solid var(--dme-border);
+    color: var(--dme-text);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 20px;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    animation: snackbar-in 0.15s ease;
+  }
+
+  @keyframes snackbar-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
 }

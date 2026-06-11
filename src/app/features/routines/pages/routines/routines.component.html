@@ -10,14 +10,28 @@
 
   <div *ngIf="error()" class="routines__error">{{ error() }}</div>
 
+  <div *ngIf="!loading() && muscleGroups().length > 1" class="routines__filters">
+    <div class="routines__segment">
+      <div *ngFor="let g of muscleGroups()"
+           class="routines__seg-item"
+           [class.routines__seg-item--active]="g === activeFilter()"
+           (click)="activeFilter.set(g)">{{ g }}</div>
+    </div>
+  </div>
+
   <div *ngIf="!loading() && routines().length === 0" class="routines__empty">
     <ds-icon name="dumbbell" [size]="32" color="var(--dme-text-mute)"/>
     <p>Aún no tienes rutinas.</p>
     <ds-button icon="plus" (clicked)="createRoutine()">Crear rutina</ds-button>
   </div>
 
+  <div *ngIf="!loading() && routines().length > 0 && filteredRoutines().length === 0" class="routines__empty">
+    <ds-icon name="filter" [size]="32" color="var(--dme-text-mute)"/>
+    <p>No hay rutinas con ese grupo muscular.</p>
+  </div>
+
   <div class="routines__list">
-    <ds-card *ngFor="let r of routines(); let i = index" [raised]="true" [pad]="16">
+    <ds-card *ngFor="let r of filteredRoutines(); let i = index" [raised]="true" [pad]="16">
       <div class="routines__item" (click)="editRoutine(r)">
         <div class="routines__icon" [style.background]="toneBg(toneForIndex(i))">
           <ds-icon name="dumbbell" [size]="22" [color]="toneColor(toneForIndex(i))"/>

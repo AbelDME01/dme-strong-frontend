@@ -1,7 +1,7 @@
 <div class="profile">
   <div class="profile__header">
     <h1 class="profile__title">Perfil</h1>
-    <div class="profile__settings-btn">
+    <div class="profile__settings-btn" (click)="openSettings()">
       <ds-icon name="settings" [size]="18" color="var(--dme-text)"/>
     </div>
   </div>
@@ -34,7 +34,8 @@
   <ds-card [pad]="0">
     <div *ngFor="let m of accountMenu; let last = last"
          class="profile__menu-item"
-         [class.profile__menu-item--last]="last">
+         [class.profile__menu-item--last]="last"
+         (click)="onMenuItem(m)">
       <div class="profile__menu-icon profile__menu-icon--mint">
         <ds-icon [name]="m.icon" [size]="16" color="var(--dme-mint)"/>
       </div>
@@ -49,7 +50,8 @@
   <ds-card [pad]="0">
     <div *ngFor="let m of prefsMenu; let last = last"
          class="profile__menu-item"
-         [class.profile__menu-item--last]="last">
+         [class.profile__menu-item--last]="last"
+         (click)="onMenuItem(m)">
       <div class="profile__menu-icon">
         <ds-icon [name]="m.icon" [size]="16" color="var(--dme-text-dim)"/>
       </div>
@@ -62,4 +64,6 @@
   <div style="margin-top: 18px;">
     <ds-button variant="danger" [full]="true" size="md" icon="logout" (click)="signOut()">Cerrar sesión</ds-button>
   </div>
+
+  <div *ngIf="snackbar()" class="profile__snackbar">{{ snackbar() }}</div>
 </div>
