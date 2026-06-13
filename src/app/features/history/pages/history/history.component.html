@@ -20,7 +20,7 @@
   </div>
 
   <!-- Month Hero -->
-  <ds-card [raised]="true" style="margin-top: 18px;">
+  <ds-card [raised]="true" style="margin-top: 28px;">
     <div class="history__month-hero">
       <div>
         <div class="history__month-label">{{ monthLabel() }}</div>
@@ -73,6 +73,14 @@
         <div class="history__stat">
           <div class="history__stat-label">Duración</div>
           <div class="history__stat-value">{{ w.dur }}</div>
+        </div>
+      </div>
+      <div *ngIf="w.exercises.length" class="history__exercises">
+        <div *ngFor="let e of w.exercises" class="history__exercise">
+          <div class="history__exercise-name">{{ e.name }}</div>
+          <div class="history__exercise-sets">
+            <span *ngFor="let s of e.sets" class="history__set-chip">{{ s }}</span>
+          </div>
         </div>
       </div>
     </ds-card>

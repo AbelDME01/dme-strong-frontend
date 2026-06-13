@@ -3,7 +3,13 @@ import { CommonModule } from '@angular/common';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
-import { Workout } from '../../../../core/api/models';
+import { Workout, WorkoutSet } from '../../../../core/api/models';
+
+/** One exercise performed in a workout, with its sets as "peso×reps" chips. */
+interface ExerciseRow {
+  name: string;
+  sets: string[];
+}
 
 interface WorkoutRow {
   date: string;
@@ -15,6 +21,7 @@ interface WorkoutRow {
   sets: number;
   dur: string;
   prs: number;
+  exercises: ExerciseRow[];
 }
 
 @Component({
@@ -106,7 +113,35 @@ export class HistoryComponent implements OnInit {
     const sets = w.workout_sets?.length ?? 0;
     const dur = w.duration_seconds ? `${Math.round(w.duration_seconds / 60)}min` : '—';
     const vol = this.computeVolume(w);
-    return { date: dateLabel, day, month, time, name: w.name, vol, sets, dur, prs: 0 };
+    const exercises = this.toExerciseRows(w.workout_sets ?? []);
+    return { date: dateLabel, day, month, time, name: w.name, vol, sets, dur, prs: 0, exercises };
+  }
+
+  /** Groups the workout sets by exercise, preserving set order within each one. */
+  private toExerciseRows(sets: WorkoutSet[]): ExerciseRow[] {
+    const byExercise = new Map<string, { name: string; sets: WorkoutSet[] }>();
+    for (const s of sets) {
+      const entry = byExercise.get(s.exercise_id) ?? {
+        name: s.exercise?.name ?? 'Ejercicio',
+        sets: [],
+      };
+      entry.sets.push(s);
+      byExercise.set(s.exercise_id, entry);
+    }
+    return [...byExercise.values()].map((e) => ({
+      name: e.name,
+      sets: e.sets
+        .sort((a, b) => a.set_number - b.set_number)
+        .map((s) => this.setLabel(s)),
+    }));
+  }
+
+  /** "80×8" (kg × reps); falls back gracefully when one of the two is missing. */
+  private setLabel(s: WorkoutSet): string {
+    const weight = s.weight_kg != null ? `${s.weight_kg}kg` : null;
+    const reps = s.reps != null ? `${s.reps}` : null;
+    if (weight && reps) return `${weight}×${reps}`;
+    return weight ?? (reps ? `${reps} reps` : '—');
   }
 
   private computeVolume(w: Workout): string {

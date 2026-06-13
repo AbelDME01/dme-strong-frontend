@@ -212,10 +212,15 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
 
   finishWorkout(): void {
     const id = this.workoutId();
+    const workout = this.workout();
     if (!id || this.finishing()) return;
     this.finishing.set(true);
+    const finishedAt = new Date();
+    const durationSeconds = workout
+      ? Math.max(0, Math.round((finishedAt.getTime() - new Date(workout.started_at).getTime()) / 1000))
+      : undefined;
     this.workoutsService
-      .update(id, { finishedAt: new Date().toISOString() })
+      .update(id, { finishedAt: finishedAt.toISOString(), durationSeconds })
       .subscribe({
         next: () => {
           this.finishing.set(false);

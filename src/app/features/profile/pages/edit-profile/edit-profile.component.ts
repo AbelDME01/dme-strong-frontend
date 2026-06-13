@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
 import { DsInputComponent } from '../../../../shared/components/ds-input/ds-input.component';
@@ -42,7 +43,11 @@ export class EditProfileComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set(friendlyAuthError(err));
+        // 404 = the user has no profile row yet (e.g. never set a name):
+        // start with an empty form instead of surfacing an error.
+        if (!(err instanceof HttpErrorResponse && err.status === 404)) {
+          this.error.set(friendlyAuthError(err));
+        }
         this.loading.set(false);
       },
     });
