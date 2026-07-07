@@ -31,8 +31,8 @@
         <div class="workout__exercise-name">{{ ex.name }}</div>
         <div class="workout__exercise-meta">
           {{ ex.muscleGroup }}
-          <ng-container *ngIf="ex.targetSets">· {{ ex.targetSets }} series objetivo</ng-container>
-          <ng-container *ngIf="ex.targetReps">· {{ ex.targetReps }} reps</ng-container>
+          <ng-container *ngIf="ex.targetSets">&ngsp;· {{ ex.targetSets }} series objetivo</ng-container>
+          <ng-container *ngIf="ex.targetReps">&ngsp;· {{ ex.targetReps }} reps</ng-container>
         </div>
       </div>
       <div class="workout__nav">

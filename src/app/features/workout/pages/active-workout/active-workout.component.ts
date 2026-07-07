@@ -190,9 +190,8 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
       })
       .subscribe({
         next: (created) => {
+          // Mantener peso/reps/rpe rellenos: lo habitual es repetir valores entre series.
           this.sets.update((list) => [...list, created]);
-          this.reps.set(null);
-          this.rpe.set(null);
           this.saving.set(false);
         },
         error: (err) => {

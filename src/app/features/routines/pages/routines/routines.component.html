@@ -57,7 +57,7 @@
         <div class="routines__info">
           <div class="routines__name">{{ r.name }}</div>
           <div class="routines__details">
-            <span><ds-icon name="dumbbell" [size]="12"/> {{ exerciseCount(r) }} ejercicios</span>
+            <span><ds-icon name="dumbbell" [size]="12"/> {{ exerciseCount(r) }} {{ exerciseCount(r) === 1 ? 'ejercicio' : 'ejercicios' }}</span>
           </div>
           <div class="routines__exercise-names" *ngIf="exerciseCount(r) > 0">
             <span *ngFor="let n of visibleNames(r)" class="routines__exercise-chip">{{ n }}</span>

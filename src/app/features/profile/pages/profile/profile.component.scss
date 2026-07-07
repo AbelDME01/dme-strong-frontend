@@ -158,8 +158,9 @@
   }
 
   &__snackbar {
+    // Despejar la tab bar fija (14px + 68px alto) y la safe-area inferior.
     position: fixed;
-    bottom: 100px;
+    bottom: calc(96px + env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
     background: var(--dme-surface3);
