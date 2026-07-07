@@ -54,6 +54,8 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
   weight = signal<number | null>(null);
   reps = signal<number | null>(null);
   rpe = signal<number | null>(null);
+  note = signal('');
+  noteVisible = signal(false);
 
   elapsed = signal('00:00');
   private timer?: ReturnType<typeof setInterval>;
@@ -180,6 +182,7 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
 
     this.saving.set(true);
     const setNumber = this.currentSets().length + 1;
+    const note = this.note().trim();
     this.workoutsService
       .addSet(id, {
         exerciseId: ex.exerciseId,
@@ -187,11 +190,15 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
         ...(this.reps() != null ? { reps: this.reps()! } : {}),
         ...(this.weight() != null ? { weightKg: this.weight()! } : {}),
         ...(this.rpe() != null ? { rpe: this.rpe()! } : {}),
+        ...(note ? { notes: note } : {}),
       })
       .subscribe({
         next: (created) => {
           // Mantener peso/reps/rpe rellenos: lo habitual es repetir valores entre series.
+          // La nota sí se limpia: es específica de cada serie.
           this.sets.update((list) => [...list, created]);
+          this.note.set('');
+          this.noteVisible.set(false);
           this.saving.set(false);
         },
         error: (err) => {
@@ -200,6 +207,10 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
           console.error(err);
         },
       });
+  }
+
+  toggleNote(): void {
+    this.noteVisible.update((visible) => !visible);
   }
 
   removeSet(set: WorkoutSet): void {
