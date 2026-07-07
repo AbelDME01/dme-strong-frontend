@@ -8,9 +8,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
+import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { RoutinesService } from '../../../../core/api/routines.service';
 import { Workout, WorkoutSet } from '../../../../core/api/models';
@@ -27,7 +28,7 @@ interface SessionExercise {
 @Component({
   selector: 'app-active-workout',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, DsButtonComponent, DsIconComponent],
+  imports: [CommonModule, FormsModule, DsButtonComponent, DsIconComponent, DsSkeletonComponent],
   templateUrl: './active-workout.component.html',
   styleUrl: './active-workout.component.scss',
 })
@@ -47,6 +48,7 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
   error = signal<string | null>(null);
   saving = signal(false);
   finishing = signal(false);
+  cancelling = signal(false);
 
   // Inputs for the next set being logged.
   weight = signal<number | null>(null);
@@ -232,6 +234,25 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
           console.error(err);
         },
       });
+  }
+
+  cancelWorkout(): void {
+    const id = this.workoutId();
+    if (!id || this.cancelling()) return;
+    const confirmed = confirm('¿Cancelar el entrenamiento? No se guardará ningún progreso.');
+    if (!confirmed) return;
+    this.cancelling.set(true);
+    this.workoutsService.remove(id).subscribe({
+      next: () => {
+        this.cancelling.set(false);
+        this.router.navigate(['/routines']);
+      },
+      error: (err) => {
+        this.cancelling.set(false);
+        this.error.set('No se pudo cancelar el entrenamiento');
+        console.error(err);
+      },
+    });
   }
 
   rpeColor(rpe: number | null): string {

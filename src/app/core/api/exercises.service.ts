@@ -19,6 +19,13 @@ export interface ExerciseQuery {
   limit?: number;
 }
 
+export interface CreateExercisePayload {
+  name: string;
+  muscleGroup: string;
+  description?: string;
+  isPublic?: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ExercisesService {
   private http = inject(HttpClient);
@@ -44,5 +51,9 @@ export class ExercisesService {
 
   getById(id: string): Observable<Exercise> {
     return this.http.get<Exercise>(`${this.base}/${id}`);
+  }
+
+  create(payload: CreateExercisePayload): Observable<Exercise> {
+    return this.http.post<Exercise>(this.base, payload);
   }
 }

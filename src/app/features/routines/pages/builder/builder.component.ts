@@ -2,8 +2,10 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
+import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
 import {
   RoutineExerciseInput,
   RoutinePayload,
@@ -11,6 +13,17 @@ import {
 } from '../../../../core/api/routines.service';
 import { ExercisesService } from '../../../../core/api/exercises.service';
 import { Exercise } from '../../../../core/api/models';
+
+const MUSCLE_GROUP_OPTIONS = [
+  { value: 'chest', label: 'Pecho' },
+  { value: 'back', label: 'Espalda' },
+  { value: 'legs', label: 'Piernas' },
+  { value: 'shoulders', label: 'Hombros' },
+  { value: 'arms', label: 'Brazos' },
+  { value: 'core', label: 'Core' },
+  { value: 'cardio', label: 'Cardio' },
+  { value: 'other', label: 'Otro' },
+] as const;
 
 /** A draft exercise row being edited inside the builder. */
 interface ExerciseDraft {
@@ -26,7 +39,7 @@ interface ExerciseDraft {
 @Component({
   selector: 'app-builder',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, DsButtonComponent, DsIconComponent],
+  imports: [CommonModule, FormsModule, RouterLink, DsButtonComponent, DsIconComponent, DsSkeletonComponent],
   templateUrl: './builder.component.html',
   styleUrl: './builder.component.scss',
 })
@@ -44,6 +57,14 @@ export class BuilderComponent implements OnInit {
   catalog = signal<Exercise[]>([]);
   pickerOpen = signal(false);
   pickerQuery = signal('');
+
+  // Custom exercise creation
+  readonly muscleGroupOptions = MUSCLE_GROUP_OPTIONS;
+  customFormOpen = signal(false);
+  customName = signal('');
+  customMuscleGroup = signal<string>('other');
+  creatingCustom = signal(false);
+  customError = signal<string | null>(null);
 
   saving = signal(false);
   error = signal<string | null>(null);
@@ -63,43 +84,53 @@ export class BuilderComponent implements OnInit {
     );
   });
 
-  ngOnInit(): void {
-    this.exercisesService.getAll().subscribe({
-      next: (data) => this.catalog.set(data),
-      error: (err) => console.error('No se pudo cargar el catálogo', err),
-    });
+  loading = signal(false);
 
+  ngOnInit(): void {
     const id = this.route.snapshot.queryParamMap.get('id');
+
     if (id) {
       this.routineId.set(id);
-      this.loadRoutine(id);
+      this.loading.set(true);
+      forkJoin({
+        catalog: this.exercisesService.getAll(),
+        routine: this.routinesService.getById(id),
+      }).subscribe({
+        next: ({ catalog, routine }) => {
+          this.catalog.set(catalog);
+          this.loading.set(false);
+          this.name.set(routine.name);
+          this.description.set(routine.description ?? '');
+          const catalogMap = new Map(catalog.map((e) => [e.id, e]));
+          const drafts = (routine.routine_exercises ?? [])
+            .slice()
+            .sort((a, b) => a.order_index - b.order_index)
+            .map<ExerciseDraft>((re) => {
+              const ex = re.exercise ?? catalogMap.get(re.exercise_id);
+              return {
+                exerciseId: re.exercise_id,
+                name: ex?.name ?? re.exercise_id,
+                muscleGroup: ex?.muscle_group ?? '',
+                targetSets: re.target_sets ?? 3,
+                targetReps: re.target_reps ?? 10,
+                targetWeight: re.target_weight,
+                restSeconds: re.rest_seconds,
+              };
+            });
+          this.exercises.set(drafts);
+        },
+        error: (err) => {
+          this.loading.set(false);
+          this.error.set('No se pudo cargar la rutina');
+          console.error(err);
+        },
+      });
+    } else {
+      this.exercisesService.getAll().subscribe({
+        next: (data) => this.catalog.set(data),
+        error: (err) => console.error('No se pudo cargar el catálogo', err),
+      });
     }
-  }
-
-  private loadRoutine(id: string): void {
-    this.routinesService.getById(id).subscribe({
-      next: (routine) => {
-        this.name.set(routine.name);
-        this.description.set(routine.description ?? '');
-        const drafts = (routine.routine_exercises ?? [])
-          .slice()
-          .sort((a, b) => a.order_index - b.order_index)
-          .map<ExerciseDraft>((re) => ({
-            exerciseId: re.exercise_id,
-            name: re.exercise?.name ?? 'Ejercicio',
-            muscleGroup: re.exercise?.muscle_group ?? '',
-            targetSets: re.target_sets ?? 3,
-            targetReps: re.target_reps ?? 10,
-            targetWeight: re.target_weight,
-            restSeconds: re.rest_seconds,
-          }));
-        this.exercises.set(drafts);
-      },
-      error: (err) => {
-        this.error.set('No se pudo cargar la rutina');
-        console.error(err);
-      },
-    });
   }
 
   addExercise(ex: Exercise): void {
@@ -117,6 +148,37 @@ export class BuilderComponent implements OnInit {
     ]);
     this.pickerOpen.set(false);
     this.pickerQuery.set('');
+  }
+
+  openCustomForm(): void {
+    this.customName.set(this.pickerQuery().trim());
+    this.customMuscleGroup.set('other');
+    this.customError.set(null);
+    this.customFormOpen.set(true);
+  }
+
+  closeCustomForm(): void {
+    this.customFormOpen.set(false);
+    this.customError.set(null);
+  }
+
+  createCustomExercise(): void {
+    const name = this.customName().trim();
+    if (!name || this.creatingCustom()) return;
+    this.creatingCustom.set(true);
+    this.customError.set(null);
+    this.exercisesService.create({ name, muscleGroup: this.customMuscleGroup(), isPublic: false }).subscribe({
+      next: (created) => {
+        this.catalog.update((list) => [...list, created]);
+        this.addExercise(created);
+        this.customFormOpen.set(false);
+        this.creatingCustom.set(false);
+      },
+      error: () => {
+        this.customError.set('No se pudo crear el ejercicio');
+        this.creatingCustom.set(false);
+      },
+    });
   }
 
   removeExercise(index: number): void {

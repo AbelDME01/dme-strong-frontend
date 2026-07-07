@@ -6,7 +6,25 @@
     </div>
   </div>
 
-<div *ngIf="loading()" class="routines__loading">Cargando...</div>
+<div *ngIf="loading()" class="routines__skeletons">
+  <ds-card *ngFor="let i of [1,2,3]" [raised]="true" [pad]="16">
+    <div class="routines__skeleton-row">
+      <ds-skeleton width="48px" height="48px" radius="14px"/>
+      <div class="routines__skeleton-info">
+        <ds-skeleton width="60%" height="15px" radius="6px"/>
+        <ds-skeleton width="40%" height="12px" radius="5px" style="margin-top:8px"/>
+        <div style="display:flex;gap:4px;margin-top:8px">
+          <ds-skeleton width="72px" height="22px" radius="6px"/>
+          <ds-skeleton width="60px" height="22px" radius="6px"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <ds-skeleton width="38px" height="38px" radius="12px"/>
+        <ds-skeleton width="38px" height="38px" radius="12px"/>
+      </div>
+    </div>
+  </ds-card>
+</div>
 
   <div *ngIf="error()" class="routines__error">{{ error() }}</div>
 
@@ -31,7 +49,7 @@
   </div>
 
   <div class="routines__list">
-    <ds-card *ngFor="let r of filteredRoutines(); let i = index" [raised]="true" [pad]="16">
+    <ds-card *ngFor="let r of filteredRoutines(); let i = index" [raised]="true" [interactive]="true" [pad]="16">
       <div class="routines__item" (click)="editRoutine(r)">
         <div class="routines__icon" [style.background]="toneBg(toneForIndex(i))">
           <ds-icon name="dumbbell" [size]="22" [color]="toneColor(toneForIndex(i))"/>
@@ -40,7 +58,10 @@
           <div class="routines__name">{{ r.name }}</div>
           <div class="routines__details">
             <span><ds-icon name="dumbbell" [size]="12"/> {{ exerciseCount(r) }} ejercicios</span>
-            <span *ngIf="r.description" class="routines__desc">{{ r.description }}</span>
+          </div>
+          <div class="routines__exercise-names" *ngIf="exerciseCount(r) > 0">
+            <span *ngFor="let n of visibleNames(r)" class="routines__exercise-chip">{{ n }}</span>
+            <span *ngIf="extraCount(r) > 0" class="routines__exercise-chip routines__exercise-chip--more">+{{ extraCount(r) }}</span>
           </div>
         </div>
         <div class="routines__actions">

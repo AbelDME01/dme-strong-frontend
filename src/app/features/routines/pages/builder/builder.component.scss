@@ -1,7 +1,7 @@
 @use 'theme/breakpoints' as bp;
 
 .builder {
-  padding: 62px 20px 32px;
+  padding: var(--page-pt) 20px var(--page-pb-bare);
   background: var(--dme-bg);
   min-height: 100dvh;
   display: flex;
@@ -19,6 +19,13 @@
     margin-top: 8px;
   }
 
+  &__skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 22px;
+  }
+
   &__close {
     width: 40px;
     height: 40px;
@@ -30,6 +37,11 @@
     justify-content: center;
     text-decoration: none;
     cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    @media (hover: hover) {
+      &:hover { background: var(--dme-surface3); border-color: var(--dme-border-strong); }
+    }
   }
 
   &__title {
@@ -46,8 +58,13 @@
     color: var(--dme-mint);
     font-weight: 700;
     cursor: pointer;
+    transition: opacity 0.15s;
 
     &--disabled { color: var(--dme-text-mute); pointer-events: none; }
+
+    @media (hover: hover) {
+      &:hover:not(&--disabled) { opacity: 0.8; }
+    }
   }
 
   &__error {
@@ -126,6 +143,11 @@
     align-items: center;
     gap: 4px;
     cursor: pointer;
+    transition: opacity 0.15s;
+
+    @media (hover: hover) {
+      &:hover { opacity: 0.75; }
+    }
   }
 
   &__list {
@@ -178,8 +200,15 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: background 0.14s, transform 0.1s;
 
     &:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) { background: var(--dme-surface2); }
+    }
+
+    &:active:not(:disabled) { transform: scale(0.92); }
   }
 
   &__targets {
@@ -329,6 +358,13 @@
     border-radius: 14px;
     padding: 12px 14px;
     cursor: pointer;
+    transition: background 0.14s, border-color 0.14s;
+
+    @media (hover: hover) {
+      &:hover { background: var(--dme-surface3); border-color: var(--dme-mint); }
+    }
+
+    &:active { background: var(--dme-surface3); }
   }
 
   &__item-icon {
@@ -361,5 +397,109 @@
     color: var(--dme-text-mute);
     font-size: 13px;
     padding: 24px 0;
+
+    p { margin: 0 0 12px; }
+  }
+
+  &__create-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--dme-mint-soft);
+    color: var(--dme-mint);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover { filter: brightness(1.1); }
+    }
+  }
+
+  &__custom-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: var(--dme-surface2);
+    border: 1px solid var(--dme-border);
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  &__custom-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dme-text);
+  }
+
+  &__custom-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    color: var(--dme-text-dim);
+    font-weight: 600;
+
+    input, select {
+      background: var(--dme-surface3);
+      border: 1px solid var(--dme-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: var(--dme-text);
+      font-size: 14px;
+      font-family: var(--dme-font);
+      outline: none;
+
+      &:focus { border-color: var(--dme-mint); }
+    }
+
+    select { cursor: pointer; }
+  }
+
+  &__custom-error {
+    font-size: 12px;
+    color: var(--dme-coral);
+  }
+
+  &__custom-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  &__custom-cancel {
+    background: var(--dme-surface3);
+    border: 1px solid var(--dme-border);
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: var(--dme-text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover { background: var(--dme-surface2); }
+    }
+  }
+
+  &__custom-save {
+    background: var(--dme-mint);
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: #06201b;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) { filter: brightness(1.08); }
+    }
   }
 }

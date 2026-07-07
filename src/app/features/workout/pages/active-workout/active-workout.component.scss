@@ -1,7 +1,7 @@
 @use 'theme/breakpoints' as bp;
 
 .workout {
-  padding: 62px 20px 32px;
+  padding: var(--page-pt) 20px var(--page-pb-bare);
   background: var(--dme-bg);
   min-height: 100dvh;
   display: flex;
@@ -31,6 +31,13 @@
     justify-content: center;
     text-decoration: none;
     flex-shrink: 0;
+    cursor: pointer;
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) { background: var(--dme-surface3); }
+    }
   }
 
   &__title-block { flex: 1; }
@@ -279,6 +286,13 @@
     padding: 16px 0;
   }
 
+  &__skeleton {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
   &__state {
     margin-top: 40px;
     text-align: center;
@@ -311,8 +325,13 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: background 0.14s;
 
     &:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) { background: var(--dme-surface2); }
+    }
   }
 
   &__entry {

@@ -33,7 +33,7 @@ interface Tab {
       position: fixed;
       left: 14px;
       right: 14px;
-      bottom: 28px;
+      bottom: calc(14px + env(safe-area-inset-bottom));
       height: 68px;
       border-radius: 28px;
       background: rgba(18, 23, 26, 0.82);

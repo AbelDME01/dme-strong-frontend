@@ -1,7 +1,7 @@
 @use 'theme/breakpoints' as bp;
 
 .profile {
-  padding: 62px 20px 110px;
+  padding: var(--page-pt) 20px var(--page-pb);
   background: var(--dme-bg);
   min-height: 100dvh;
   position: relative;
@@ -121,8 +121,16 @@
     padding: 14px 16px;
     border-bottom: 1px solid var(--dme-border);
     cursor: pointer;
+    transition: background 0.14s;
+    border-radius: 0;
 
     &--last { border-bottom: none; }
+
+    @media (hover: hover) {
+      &:hover { background: var(--dme-surface2); }
+    }
+
+    &:active { background: var(--dme-surface3); }
   }
 
   &__menu-icon {

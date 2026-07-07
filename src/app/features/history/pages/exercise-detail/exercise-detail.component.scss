@@ -1,7 +1,7 @@
 @use 'theme/breakpoints' as bp;
 
 .exercise {
-  padding: 62px 20px 30px;
+  padding: var(--page-pt) 20px var(--page-pb-bare);
   background: var(--dme-bg);
   min-height: 100dvh;
 

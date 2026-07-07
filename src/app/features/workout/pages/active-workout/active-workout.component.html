@@ -1,8 +1,8 @@
 <div class="workout">
   <div class="workout__header">
-    <a routerLink="/routines" class="workout__back">
+    <button class="workout__back" (click)="cancelWorkout()" [disabled]="cancelling()">
       <ds-icon name="chevronL" [size]="20" color="var(--dme-text)"/>
-    </a>
+    </button>
     <div class="workout__title-block">
       <div class="workout__progress-label">
         Ejercicio {{ exercises().length ? currentIndex() + 1 : 0 }} / {{ exercises().length }}
@@ -15,7 +15,13 @@
     </div>
   </div>
 
-  <div *ngIf="loading()" class="workout__state">Cargando…</div>
+  <div *ngIf="loading()" class="workout__skeleton">
+    <ds-skeleton width="55%" height="20px" radius="7px"/>
+    <ds-skeleton width="38%" height="14px" radius="6px" style="margin-top:8px"/>
+    <ds-skeleton width="100%" height="200px" radius="16px" style="margin-top:18px"/>
+    <ds-skeleton width="100%" height="52px" radius="12px" style="margin-top:14px"/>
+    <ds-skeleton width="100%" height="52px" radius="12px" style="margin-top:10px"/>
+  </div>
   <div *ngIf="error()" class="workout__error">{{ error() }}</div>
 
   <ng-container *ngIf="!loading() && currentExercise() as ex">
@@ -94,6 +100,13 @@
                [disabled]="finishing()"
                (clicked)="finishWorkout()">
       {{ finishing() ? 'Finalizando…' : 'Finalizar entrenamiento' }}
+    </ds-button>
+
+    <ds-button [full]="true" size="lg" variant="danger"
+               style="margin-top: 8px"
+               [disabled]="cancelling()"
+               (clicked)="cancelWorkout()">
+      {{ cancelling() ? 'Cancelando…' : 'Cancelar entrenamiento' }}
     </ds-button>
   </ng-container>
 

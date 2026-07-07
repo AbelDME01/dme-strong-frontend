@@ -19,70 +19,110 @@
     </div>
   </div>
 
-  <!-- Month Hero -->
-  <ds-card [raised]="true" style="margin-top: 28px;">
-    <div class="history__month-hero">
-      <div>
-        <div class="history__month-label">{{ monthLabel() }}</div>
-        <div class="history__month-count">
-          <span class="history__month-num">{{ monthCount() }}</span>
-          <span class="history__month-unit">entrenos</span>
-        </div>
-      </div>
-      <div *ngIf="monthTrend() !== null" class="history__month-trend">
-        <div class="history__month-pct">{{ monthTrend()! >= 0 ? '+' : '' }}{{ monthTrend() }}%</div>
-        <div class="history__month-vs">vs mes anterior</div>
-      </div>
+  <!-- Skeleton state -->
+  <ng-container *ngIf="loading()">
+    <div class="history__skeleton-hero">
+      <ds-skeleton height="14px" width="120px" radius="6px"/>
+      <ds-skeleton height="40px" width="80px" radius="8px" style="margin-top: 8px"/>
+      <ds-skeleton height="44px" radius="4px" style="margin-top: 16px"/>
     </div>
-    <div class="history__bars">
-      <div *ngFor="let h of chartBars; let i = index"
-           class="history__bar"
-           [class.history__bar--latest]="i === chartBars.length - 1"
-           [class.history__bar--recent]="i >= chartBars.length - 4 && i < chartBars.length - 1"
-           [style.height]="barHeight(h)">
-      </div>
-    </div>
-  </ds-card>
-
-  <!-- Workouts List -->
-  <div class="history__list">
-    <ds-card *ngFor="let w of workouts()" [raised]="true" [pad]="14" style="margin-bottom: 10px;">
-      <div class="history__item-header">
-        <div class="history__date-badge">
-          <div class="history__date-month">{{ w.month }}</div>
-          <div class="history__date-day">{{ w.day }}</div>
-        </div>
-        <div class="history__item-info">
-          <div class="history__item-name">{{ w.name }}</div>
-          <div class="history__item-time">{{ w.date }} · {{ w.time }}</div>
-        </div>
-        <div *ngIf="w.prs > 0" class="history__prs-badge">
-          <ds-icon name="trophy" [size]="13" color="var(--dme-amber)"/>
-          <span>{{ w.prs }}</span>
-        </div>
-      </div>
-      <div class="history__item-stats">
-        <div class="history__stat">
-          <div class="history__stat-label">Volumen</div>
-          <div class="history__stat-value">{{ w.vol }}</div>
-        </div>
-        <div class="history__stat">
-          <div class="history__stat-label">Series</div>
-          <div class="history__stat-value">{{ w.sets }}</div>
-        </div>
-        <div class="history__stat">
-          <div class="history__stat-label">Duración</div>
-          <div class="history__stat-value">{{ w.dur }}</div>
-        </div>
-      </div>
-      <div *ngIf="w.exercises.length" class="history__exercises">
-        <div *ngFor="let e of w.exercises" class="history__exercise">
-          <div class="history__exercise-name">{{ e.name }}</div>
-          <div class="history__exercise-sets">
-            <span *ngFor="let s of e.sets" class="history__set-chip">{{ s }}</span>
+    <div class="history__skeleton-list">
+      <div *ngFor="let _ of [1,2,3]" class="history__skeleton-card">
+        <div style="display:flex;gap:12px;align-items:center">
+          <ds-skeleton width="46px" height="46px" radius="12px"/>
+          <div style="flex:1">
+            <ds-skeleton height="14px" width="60%" radius="6px"/>
+            <ds-skeleton height="11px" width="40%" radius="6px" style="margin-top:6px"/>
           </div>
+        </div>
+        <ds-skeleton height="1px" radius="0" style="margin-top:12px;opacity:.4"/>
+        <div style="display:flex;gap:14px;margin-top:12px">
+          <ds-skeleton height="36px" radius="8px"/>
+          <ds-skeleton height="36px" radius="8px"/>
+          <ds-skeleton height="36px" radius="8px"/>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Loaded state -->
+  <ng-container *ngIf="!loading()">
+    <!-- Month Hero -->
+    <ds-card [raised]="true" style="margin-top: 28px;">
+      <div class="history__month-hero">
+        <div>
+          <div class="history__month-label">{{ monthLabel() }}</div>
+          <div class="history__month-count">
+            <span class="history__month-num">{{ monthCount() }}</span>
+            <span class="history__month-unit">entrenos</span>
+          </div>
+        </div>
+        <div *ngIf="monthTrend() !== null" class="history__month-trend">
+          <div class="history__month-pct">{{ monthTrend()! >= 0 ? '+' : '' }}{{ monthTrend() }}%</div>
+          <div class="history__month-vs">vs mes anterior</div>
+        </div>
+      </div>
+      <div class="history__bars">
+        <div *ngFor="let h of chartBars(); let i = index"
+             class="history__bar"
+             [class.history__bar--latest]="i === chartBars().length - 1"
+             [class.history__bar--recent]="i >= chartBars().length - 4 && i < chartBars().length - 1"
+             [style.height]="barHeight(h)">
         </div>
       </div>
     </ds-card>
-  </div>
+
+    <!-- Empty state -->
+    <div *ngIf="workouts().length === 0" class="history__empty">
+      <div class="history__empty-icon">
+        <ds-icon name="dumbbell" [size]="32" color="var(--dme-text-mute)"/>
+      </div>
+      <div class="history__empty-title">Sin entrenamientos</div>
+      <div class="history__empty-sub">
+        {{ activePeriod() === 'all' ? 'Aún no has registrado ningún entrenamiento.' : 'No hay entrenamientos en este período.' }}
+      </div>
+    </div>
+
+    <!-- Workouts List -->
+    <div class="history__list">
+      <div *ngFor="let w of workouts()" class="history__item-card" tabindex="0">
+        <div class="history__item-header">
+          <div class="history__date-badge">
+            <div class="history__date-month">{{ w.month }}</div>
+            <div class="history__date-day">{{ w.day }}</div>
+          </div>
+          <div class="history__item-info">
+            <div class="history__item-name">{{ w.name }}</div>
+            <div class="history__item-time">{{ w.date }} · {{ w.time }}</div>
+          </div>
+          <div *ngIf="w.prs > 0" class="history__prs-badge">
+            <ds-icon name="trophy" [size]="13" color="var(--dme-amber)"/>
+            <span>{{ w.prs }}</span>
+          </div>
+        </div>
+        <div class="history__item-stats">
+          <div class="history__stat">
+            <div class="history__stat-label">Volumen</div>
+            <div class="history__stat-value">{{ w.vol }}</div>
+          </div>
+          <div class="history__stat">
+            <div class="history__stat-label">Series</div>
+            <div class="history__stat-value">{{ w.sets }}</div>
+          </div>
+          <div class="history__stat">
+            <div class="history__stat-label">Duración</div>
+            <div class="history__stat-value">{{ w.dur }}</div>
+          </div>
+        </div>
+        <div *ngIf="w.exercises.length" class="history__exercises">
+          <div *ngFor="let e of w.exercises" class="history__exercise">
+            <div class="history__exercise-name">{{ e.name }}</div>
+            <div class="history__exercise-sets">
+              <span *ngFor="let s of e.sets" class="history__set-chip">{{ s }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </div>

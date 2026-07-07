@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { forkJoin, Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Workout, WorkoutSet } from './models';
 
@@ -51,19 +51,14 @@ export class WorkoutsService {
     return this.http.get<Workout>(`${this.base}/${id}`);
   }
 
-  /**
-   * Returns recent workouts with their `workout_sets` hydrated. The list
-   * endpoint omits nested sets, so this fetches the detail of the most recent
-   * `max` workouts in parallel. Bounded by `max` to keep it scalable.
-   */
+  /** Returns recent workouts with sets already hydrated — single request via includeSets. */
   getRecentWithSets(max = 20): Observable<Workout[]> {
-    return this.getAll().pipe(
-      switchMap((workouts) => {
-        const slice = workouts.slice(0, max);
-        if (slice.length === 0) return of<Workout[]>([]);
-        return forkJoin(slice.map((w) => this.getById(w.id)));
-      }),
-    );
+    const params = new HttpParams()
+      .set('includeSets', 'true')
+      .set('limit', String(max));
+    return this.http
+      .get<PaginatedWorkouts>(this.base, { params })
+      .pipe(map((r) => r.data));
   }
 
   create(data: CreateWorkoutPayload): Observable<Workout> {

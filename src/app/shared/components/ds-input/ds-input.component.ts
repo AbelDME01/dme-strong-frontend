@@ -58,7 +58,7 @@ import { DsIconComponent } from '../ds-icon/ds-icon.component';
     .ds-input-text {
       flex: 1;
       color: var(--dme-text);
-      font-size: 15px;
+      font-size: 16px;
       font-family: var(--dme-font);
       &--placeholder { color: var(--dme-text-mute); }
     }

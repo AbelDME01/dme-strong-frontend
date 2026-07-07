@@ -73,6 +73,12 @@ import { CommonModule } from '@angular/common';
           <path fill="none" [attr.stroke]="color" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5v.2a2 2 0 01-4 0V21a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9A1.7 1.7 0 0010 3.6V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1h.2a2 2 0 010 4H21a1.7 1.7 0 00-1.5 1z"/>
         </ng-container>
 
+        <ng-container *ngSwitchCase="'lock'">
+          <rect fill="none" [attr.stroke]="color" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" x="5" y="11" width="14" height="10" rx="2"/>
+          <path fill="none" [attr.stroke]="color" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 018 0v4"/>
+          <circle [attr.fill]="color" cx="12" cy="16" r="1.2"/>
+        </ng-container>
+
         <path *ngSwitchCase="'bell'" fill="none" [attr.stroke]="color" stroke-width="1.6"
           stroke-linecap="round" stroke-linejoin="round"
           d="M18 16V11a6 6 0 10-12 0v5l-2 3h16l-2-3zM10 20a2 2 0 004 0"/>

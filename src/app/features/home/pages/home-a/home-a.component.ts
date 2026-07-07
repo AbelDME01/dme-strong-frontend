@@ -50,6 +50,7 @@ export class HomeAComponent implements OnInit {
   todayRoutine = signal<TodayRoutine | null>(null);
   weekDone = signal<boolean[]>([false, false, false, false, false, false, false]);
   starting = signal(false);
+  apiError = signal<string | null>(null);
 
   stats = signal([
     { label: 'Entrenamientos', value: '0', trend: '' },
@@ -71,12 +72,12 @@ export class HomeAComponent implements OnInit {
     // hydrate the recent workouts to compute the weekly volume correctly.
     this.workoutsService.getRecentWithSets().subscribe({
       next: (data) => this.applyWorkoutStats(data),
-      error: (err) => console.error(err),
+      error: () => this.apiError.set('No se pudo cargar el historial de entrenamientos.'),
     });
 
     this.recordsService.getAll().subscribe({
       next: (data) => this.prs.set(data.slice(0, 2).map((r) => this.toPrRow(r))),
-      error: (err) => console.error(err),
+      error: () => { /* PRs are non-critical; silently skip */ },
     });
 
     this.routinesService.getAll().subscribe({
@@ -93,7 +94,7 @@ export class HomeAComponent implements OnInit {
           this.todayRoutine.set(null);
         }
       },
-      error: (err) => console.error(err),
+      error: () => this.apiError.set('No se pudieron cargar tus rutinas.'),
     });
   }
 

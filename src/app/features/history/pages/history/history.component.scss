@@ -1,7 +1,7 @@
 @use 'theme/breakpoints' as bp;
 
 .history {
-  padding: 62px 20px 110px;
+  padding: var(--page-pt) 20px var(--page-pb);
   background: var(--dme-bg);
   min-height: 100dvh;
   position: relative;
@@ -37,10 +37,71 @@
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
 
+    @media (hover: hover) {
+      &:hover:not(&--active) { background: var(--dme-surface3); }
+    }
+
     &--active {
       background: var(--dme-surface3);
       border-color: var(--dme-mint);
     }
+  }
+
+  // ── Skeleton ──────────────────────────────────────────────────────────────
+
+  &__skeleton-hero {
+    background: var(--dme-surface);
+    border: 1px solid var(--dme-border);
+    border-radius: var(--dme-radius-lg);
+    padding: 18px;
+    margin-top: 28px;
+  }
+
+  &__skeleton-list {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__skeleton-card {
+    background: var(--dme-surface);
+    border: 1px solid var(--dme-border);
+    border-radius: var(--dme-radius-lg);
+    padding: 14px;
+  }
+
+  // ── Empty state ──────────────────────────────────────────────────────────
+
+  &__empty {
+    margin-top: 60px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: var(--dme-surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__empty-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dme-text-dim);
+  }
+
+  &__empty-sub {
+    font-size: 13px;
+    color: var(--dme-text-mute);
+    max-width: 260px;
   }
 
   &__filters {
@@ -71,6 +132,10 @@
     font-weight: 600;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
+
+    @media (hover: hover) {
+      &:hover:not(&--active) { color: var(--dme-text); background: rgba(255,255,255,0.04); }
+    }
 
     &--active {
       background: var(--dme-surface3);
@@ -136,14 +201,44 @@
 
   &__bar {
     flex: 1;
-    border-radius: 2px;
-    background: rgba(0, 229, 160, 0.25);
+    border-radius: 3px;
+    background: rgba(0, 229, 160, 0.15);
+    min-height: 4px;
+    transition: height 0.4s ease;
 
     &--recent { background: var(--dme-mint-dim); }
     &--latest { background: var(--dme-mint); }
   }
 
-  &__list { margin-top: 18px; }
+  &__list {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__item-card {
+    background: var(--dme-surface);
+    border: 1px solid var(--dme-border);
+    border-radius: var(--dme-radius-lg);
+    padding: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+
+    @media (hover: hover) {
+      &:hover {
+        border-color: rgba(0, 229, 160, 0.35);
+        background: var(--dme-surface2);
+      }
+    }
+
+    &:active { transform: scale(0.995); }
+
+    &:focus-visible {
+      outline: 2px solid var(--dme-mint);
+      outline-offset: 2px;
+    }
+  }
 
   &__item-header {
     display: flex;

@@ -1,8 +1,17 @@
 .home {
-  padding: 62px 20px 110px;
+  padding: var(--page-pt) 20px var(--page-pb);
   background: var(--dme-bg);
   min-height: 100dvh;
   position: relative;
+
+  &__error-banner {
+    margin: 8px 0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--dme-coral) 15%, transparent);
+    color: var(--dme-coral);
+    font-size: 13px;
+  }
 
   &__header {
     display: flex;
@@ -34,6 +43,12 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    @media (hover: hover) {
+      &:hover { background: var(--dme-surface3); border-color: var(--dme-border-strong); }
+    }
   }
 
   &__bell-dot {
@@ -109,6 +124,13 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    @media (hover: hover) {
+      &:hover { background: var(--dme-surface2); border-color: var(--dme-border-strong); }
+    }
+
+    &:active { background: var(--dme-surface3); }
   }
 
   &__stats {
@@ -164,6 +186,11 @@
     color: var(--dme-mint);
     font-weight: 600;
     cursor: pointer;
+    transition: opacity 0.15s;
+
+    @media (hover: hover) {
+      &:hover { opacity: 0.75; }
+    }
   }
 
   &__week-days {
