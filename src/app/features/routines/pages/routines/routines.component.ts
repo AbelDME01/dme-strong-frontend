@@ -5,6 +5,7 @@ import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-bu
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
 import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
+import { DsModalComponent } from '../../../../shared/components/ds-modal/ds-modal.component';
 import { RoutinesService } from '../../../../core/api/routines.service';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { Routine } from '../../../../core/api/models';
@@ -12,7 +13,7 @@ import { Routine } from '../../../../core/api/models';
 @Component({
   selector: 'app-routines',
   standalone: true,
-  imports: [CommonModule, DsButtonComponent, DsCardComponent, DsIconComponent, DsSkeletonComponent],
+  imports: [CommonModule, DsButtonComponent, DsCardComponent, DsIconComponent, DsSkeletonComponent, DsModalComponent],
   templateUrl: './routines.component.html',
   styleUrl: './routines.component.scss',
 })
@@ -26,6 +27,12 @@ export class RoutinesComponent implements OnInit {
   error = signal<string | null>(null);
   startingId = signal<string | null>(null);
   activeFilter = signal<string>('Todas');
+  routinePendingDeletion = signal<Routine | null>(null);
+
+  deleteModalMessage = computed<string>(() => {
+    const routine = this.routinePendingDeletion();
+    return routine ? `¿Eliminar la rutina "${routine.name}"?` : '';
+  });
 
   muscleGroups = computed<string[]>(() => {
     const groups = new Set<string>();
@@ -101,8 +108,13 @@ export class RoutinesComponent implements OnInit {
 
   deleteRoutine(routine: Routine, event: Event): void {
     event.stopPropagation();
-    const ok = confirm(`¿Eliminar la rutina "${routine.name}"?`);
-    if (!ok) return;
+    this.routinePendingDeletion.set(routine);
+  }
+
+  confirmDeleteRoutine(): void {
+    const routine = this.routinePendingDeletion();
+    this.routinePendingDeletion.set(null);
+    if (!routine) return;
     this.routinesService.remove(routine.id).subscribe({
       next: () => {
         this.routines.update((list) => list.filter((r) => r.id !== routine.id));
