@@ -64,7 +64,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.usersService.getProfile().subscribe({
       next: (p) => this.profile.set(p),
-      error: (err) => console.error(err),
+      error: () => this.showSnackbar('No se pudo cargar el perfil. Revisa tu conexión.'),
     });
 
     this.measurementsService.getAll().subscribe({
@@ -76,7 +76,7 @@ export class ProfileComponent implements OnInit {
           this.latestMeasurement.set(sorted[0]);
         }
       },
-      error: (err) => console.error(err),
+      error: () => { /* medidas son no-críticas */ },
     });
   }
 

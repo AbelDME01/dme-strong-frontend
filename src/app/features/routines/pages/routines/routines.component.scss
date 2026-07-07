@@ -1,7 +1,7 @@
 @use 'theme/breakpoints' as bp;
 
 .routines {
-  padding: 62px 20px 110px;
+  padding: var(--page-pt) 20px var(--page-pb);
   background: var(--dme-bg);
   min-height: 100dvh;
   position: relative;
@@ -33,6 +33,13 @@
     justify-content: center;
     box-shadow: 0 4px 16px rgba(0, 229, 160, 0.3);
     cursor: pointer;
+    transition: filter 0.15s, transform 0.15s;
+
+    @media (hover: hover) {
+      &:hover { filter: brightness(1.1); transform: scale(1.05); }
+    }
+
+    &:active { transform: scale(0.96); }
   }
 
   &__filters {
@@ -67,6 +74,10 @@
     &--active {
       background: var(--dme-surface3);
       color: var(--dme-text);
+    }
+
+    @media (hover: hover) {
+      &:hover:not(&--active) { background: var(--dme-surface3); color: var(--dme-text); }
     }
   }
 
@@ -122,6 +133,13 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: background 0.14s;
+
+    @media (hover: hover) {
+      &:hover { background: rgba(255, 107, 91, 0.22); }
+    }
+
+    &:active { background: rgba(255, 107, 91, 0.3); }
   }
 
   &__icon {
@@ -172,6 +190,49 @@
     }
   }
 
+  &__skeletons {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__skeleton-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  &__skeleton-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__exercise-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  &__exercise-chip {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--dme-text-dim);
+    background: var(--dme-surface2);
+    border-radius: 6px;
+    padding: 2px 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+
+    &--more {
+      color: var(--dme-mint);
+      background: var(--dme-mint-soft);
+    }
+  }
+
   &__play {
     width: 38px;
     height: 38px;
@@ -182,7 +243,14 @@
     justify-content: center;
     flex-shrink: 0;
     cursor: pointer;
+    transition: background 0.14s;
 
     &--busy { opacity: 0.5; pointer-events: none; }
+
+    @media (hover: hover) {
+      &:hover:not(&--busy) { background: var(--dme-mint-soft); }
+    }
+
+    &:active:not(&--busy) { background: var(--dme-mint-soft); }
   }
 }

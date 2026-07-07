@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
+import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
 import { RoutinesService } from '../../../../core/api/routines.service';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { Routine } from '../../../../core/api/models';
@@ -11,7 +12,7 @@ import { Routine } from '../../../../core/api/models';
 @Component({
   selector: 'app-routines',
   standalone: true,
-  imports: [CommonModule, DsButtonComponent, DsCardComponent, DsIconComponent],
+  imports: [CommonModule, DsButtonComponent, DsCardComponent, DsIconComponent, DsSkeletonComponent],
   templateUrl: './routines.component.html',
   styleUrl: './routines.component.scss',
 })
@@ -115,6 +116,22 @@ export class RoutinesComponent implements OnInit {
 
   exerciseCount(routine: Routine): number {
     return routine.routine_exercises?.length ?? 0;
+  }
+
+  exerciseNames(routine: Routine): string[] {
+    return (routine.routine_exercises ?? [])
+      .slice()
+      .sort((a, b) => a.order_index - b.order_index)
+      .map((re) => re.exercise?.name ?? 'Ejercicio');
+  }
+
+  visibleNames(routine: Routine): string[] {
+    return this.exerciseNames(routine).slice(0, 3);
+  }
+
+  extraCount(routine: Routine): number {
+    const total = this.exerciseCount(routine);
+    return total > 3 ? total - 3 : 0;
   }
 
   toneForIndex(i: number): string {

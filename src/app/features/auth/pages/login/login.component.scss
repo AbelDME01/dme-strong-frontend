@@ -1,7 +1,7 @@
 @use 'theme/breakpoints' as bp;
 
 .login {
-  padding: 60px 28px 32px;
+  padding: var(--page-pt) 28px var(--page-pb-bare);
   display: flex;
   flex-direction: column;
   min-height: 100dvh;

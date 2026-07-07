@@ -3,7 +3,9 @@
  * so technical strings like "Failed to fetch" are never shown to the user.
  */
 export function friendlyAuthError(err: unknown): string {
-  const raw = err instanceof Error ? err.message : String(err ?? '');
+  const raw = err instanceof Error
+    ? err.message
+    : (err as any)?.error?.message ?? (err as any)?.message ?? String(err ?? '');
   const m = raw.toLowerCase();
 
   if (

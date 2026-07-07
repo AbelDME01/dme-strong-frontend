@@ -49,6 +49,14 @@
     color: var(--dme-text-dim);
     cursor: pointer;
     text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+
+    @media (hover: hover) {
+      &:hover:not(&--active) {
+        background: var(--dme-surface2);
+        color: var(--dme-text);
+      }
+    }
 
     &--active {
       background: var(--dme-mint-soft);
@@ -66,6 +74,12 @@
     margin-top: 10px;
     cursor: pointer;
     text-decoration: none;
+    border-radius: 10px;
+    transition: background 0.15s;
+
+    @media (hover: hover) {
+      &:hover { background: var(--dme-surface2); }
+    }
   }
 
   &__user-avatar {

@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
+import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { Workout, WorkoutSet } from '../../../../core/api/models';
 
@@ -27,19 +28,32 @@ interface WorkoutRow {
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, DsCardComponent, DsIconComponent],
+  imports: [CommonModule, DsCardComponent, DsIconComponent, DsSkeletonComponent],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })
 export class HistoryComponent implements OnInit {
   private workoutsService = inject(WorkoutsService);
 
-  chartBars = [12, 18, 22, 30, 38, 25, 32, 28, 35, 42, 38, 45, 50, 44];
-
   rawWorkouts = signal<Workout[]>([]);
   loading = signal(false);
   showFilters = signal(false);
   activePeriod = signal<'all' | 'week' | 'month' | '3m'>('all');
+
+  /** Last 14 weeks of workout counts, derived from real data. */
+  chartBars = computed<number[]>(() => {
+    const workouts = this.rawWorkouts();
+    const weeks: number[] = new Array(14).fill(0);
+    const now = Date.now();
+    for (const w of workouts) {
+      const msAgo = now - new Date(w.started_at).getTime();
+      const weeksAgo = Math.floor(msAgo / (7 * 86400000));
+      if (weeksAgo >= 0 && weeksAgo < 14) {
+        weeks[13 - weeksAgo]++;
+      }
+    }
+    return weeks;
+  });
 
   readonly periods: { key: 'all' | 'week' | 'month' | '3m'; label: string }[] = [
     { key: 'all', label: 'Todo' },
@@ -163,6 +177,9 @@ export class HistoryComponent implements OnInit {
   }
 
   barHeight(val: number): string {
-    return `${val}%`;
+    if (val === 0) return '8%';
+    const max = Math.max(...this.chartBars(), 1);
+    const pct = Math.round((val / max) * 100);
+    return `${Math.max(pct, 16)}%`;
   }
 }

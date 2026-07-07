@@ -13,6 +13,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
     <button
       [class]="'ds-btn ds-btn--' + variant + ' ds-btn--' + size"
       [class.ds-btn--full]="full"
+      [class.ds-btn--disabled]="disabled"
       [disabled]="disabled"
       (click)="clicked.emit($event)">
       <ds-icon *ngIf="icon" [name]="icon" [size]="iconSize" [color]="iconColor"/>
@@ -34,7 +35,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
       transition: transform 0.12s, opacity 0.12s;
       white-space: nowrap;
 
-      &:disabled { opacity: 0.5; cursor: not-allowed; }
+      &:disabled, &--disabled { opacity: 0.45; cursor: not-allowed; }
       &:active:not(:disabled) { transform: scale(0.97); }
       &--full { width: 100%; }
 
@@ -43,11 +44,26 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
       &--lg  { height: 54px; padding: 0 22px; font-size: 16px; border-radius: 16px; }
       &--xl  { height: 64px; padding: 0 26px; font-size: 18px; border-radius: 20px; }
 
-      &--primary  { background: var(--dme-mint); color: #06201B; border: none; }
-      &--secondary { background: var(--dme-surface2); color: var(--dme-text); border: 1px solid var(--dme-border); }
-      &--ghost    { background: transparent; color: var(--dme-text); border: 1px solid var(--dme-border-strong); }
-      &--danger   { background: rgba(255,107,91,0.12); color: var(--dme-coral); border: 1px solid rgba(255,107,91,0.25); }
-      &--soft     { background: var(--dme-mint-soft); color: var(--dme-mint); border: none; }
+      &--primary  {
+        background: var(--dme-mint); color: #06201B; border: none;
+        @media (hover: hover) { &:hover:not(:disabled) { filter: brightness(1.08); } }
+      }
+      &--secondary {
+        background: var(--dme-surface2); color: var(--dme-text); border: 1px solid var(--dme-border);
+        @media (hover: hover) { &:hover:not(:disabled) { background: var(--dme-surface3); border-color: var(--dme-border-strong); } }
+      }
+      &--ghost {
+        background: transparent; color: var(--dme-text); border: 1px solid var(--dme-border-strong);
+        @media (hover: hover) { &:hover:not(:disabled) { background: var(--dme-surface2); } }
+      }
+      &--danger {
+        background: rgba(255,107,91,0.12); color: var(--dme-coral); border: 1px solid rgba(255,107,91,0.25);
+        @media (hover: hover) { &:hover:not(:disabled) { background: rgba(255,107,91,0.2); border-color: rgba(255,107,91,0.4); } }
+      }
+      &--soft {
+        background: var(--dme-mint-soft); color: var(--dme-mint); border: none;
+        @media (hover: hover) { &:hover:not(:disabled) { background: rgba(0,229,160,0.2); } }
+      }
     }
   `],
 })
