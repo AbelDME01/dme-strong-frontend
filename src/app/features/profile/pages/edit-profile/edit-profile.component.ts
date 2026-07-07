@@ -38,7 +38,8 @@ export class EditProfileComponent implements OnInit {
   ngOnInit(): void {
     this.usersService.getProfile().subscribe({
       next: (profile) => {
-        this.fullName.set(profile.full_name ?? '');
+        // El perfil se autoprovisiona vacío en el backend; caer al nombre del registro (metadata de auth).
+        this.fullName.set(profile.full_name ?? this.authService.user()?.user_metadata?.['full_name'] ?? '');
         this.heightCm.set(profile.height_cm != null ? String(profile.height_cm) : '');
         this.loading.set(false);
       },

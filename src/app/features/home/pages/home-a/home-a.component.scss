@@ -138,6 +138,12 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
+
+    ds-card {
+      display: block;
+
+      ::ng-deep .ds-card { height: 100%; }
+    }
   }
 
   &__stat-label {
@@ -149,11 +155,12 @@
   }
 
   &__stat-value {
-    font-size: 22px;
+    font-size: clamp(16px, 5.5vw, 22px);
     font-weight: 800;
     margin-top: 6px;
     letter-spacing: -0.4px;
     color: var(--dme-text);
+    white-space: nowrap;
   }
 
   &__stat-trend {

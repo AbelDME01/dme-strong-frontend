@@ -136,7 +136,7 @@ export class HomeAComponent implements OnInit {
     this.stats.set([
       { label: 'Entrenamientos', value: String(data.length), trend: '' },
       { label: 'Volumen sem.', value: volLabel, trend: '' },
-      { label: 'Racha', value: String(streak), trend: 'días' },
+      { label: 'Racha', value: String(streak), trend: streak === 1 ? 'día' : 'días' },
     ]);
   }
 
