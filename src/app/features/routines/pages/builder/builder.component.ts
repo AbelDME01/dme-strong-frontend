@@ -6,6 +6,7 @@ import { forkJoin, of } from 'rxjs';
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
 import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
+import { ExercisePickerComponent } from '../../../../shared/components/exercise-picker/exercise-picker.component';
 import {
   RoutineExerciseInput,
   RoutinePayload,
@@ -13,17 +14,6 @@ import {
 } from '../../../../core/api/routines.service';
 import { ExercisesService } from '../../../../core/api/exercises.service';
 import { Exercise } from '../../../../core/api/models';
-
-const MUSCLE_GROUP_OPTIONS = [
-  { value: 'chest', label: 'Pecho' },
-  { value: 'back', label: 'Espalda' },
-  { value: 'legs', label: 'Piernas' },
-  { value: 'shoulders', label: 'Hombros' },
-  { value: 'arms', label: 'Brazos' },
-  { value: 'core', label: 'Core' },
-  { value: 'cardio', label: 'Cardio' },
-  { value: 'other', label: 'Otro' },
-] as const;
 
 /** A draft exercise row being edited inside the builder. */
 interface ExerciseDraft {
@@ -39,7 +29,15 @@ interface ExerciseDraft {
 @Component({
   selector: 'app-builder',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, DsButtonComponent, DsIconComponent, DsSkeletonComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    DsButtonComponent,
+    DsIconComponent,
+    DsSkeletonComponent,
+    ExercisePickerComponent,
+  ],
   templateUrl: './builder.component.html',
   styleUrl: './builder.component.scss',
 })
@@ -56,15 +54,6 @@ export class BuilderComponent implements OnInit {
 
   catalog = signal<Exercise[]>([]);
   pickerOpen = signal(false);
-  pickerQuery = signal('');
-
-  // Custom exercise creation
-  readonly muscleGroupOptions = MUSCLE_GROUP_OPTIONS;
-  customFormOpen = signal(false);
-  customName = signal('');
-  customMuscleGroup = signal<string>('other');
-  creatingCustom = signal(false);
-  customError = signal<string | null>(null);
 
   saving = signal(false);
   error = signal<string | null>(null);
@@ -72,17 +61,7 @@ export class BuilderComponent implements OnInit {
   isEdit = computed(() => this.routineId() !== null);
   canSave = computed(() => this.name().trim().length > 0 && !this.saving());
 
-  filteredCatalog = computed(() => {
-    const q = this.pickerQuery().trim().toLowerCase();
-    const chosen = new Set(this.exercises().map((e) => e.exerciseId));
-    return this.catalog().filter(
-      (ex) =>
-        !chosen.has(ex.id) &&
-        (q === '' ||
-          ex.name.toLowerCase().includes(q) ||
-          ex.muscle_group.toLowerCase().includes(q)),
-    );
-  });
+  chosenExerciseIds = computed(() => this.exercises().map((e) => e.exerciseId));
 
   loading = signal(false);
 
@@ -134,6 +113,9 @@ export class BuilderComponent implements OnInit {
   }
 
   addExercise(ex: Exercise): void {
+    this.catalog.update((list) =>
+      list.some((c) => c.id === ex.id) ? list : [...list, ex],
+    );
     this.exercises.update((list) => [
       ...list,
       {
@@ -147,38 +129,6 @@ export class BuilderComponent implements OnInit {
       },
     ]);
     this.pickerOpen.set(false);
-    this.pickerQuery.set('');
-  }
-
-  openCustomForm(): void {
-    this.customName.set(this.pickerQuery().trim());
-    this.customMuscleGroup.set('other');
-    this.customError.set(null);
-    this.customFormOpen.set(true);
-  }
-
-  closeCustomForm(): void {
-    this.customFormOpen.set(false);
-    this.customError.set(null);
-  }
-
-  createCustomExercise(): void {
-    const name = this.customName().trim();
-    if (!name || this.creatingCustom()) return;
-    this.creatingCustom.set(true);
-    this.customError.set(null);
-    this.exercisesService.create({ name, muscleGroup: this.customMuscleGroup(), isPublic: false }).subscribe({
-      next: (created) => {
-        this.catalog.update((list) => [...list, created]);
-        this.addExercise(created);
-        this.customFormOpen.set(false);
-        this.creatingCustom.set(false);
-      },
-      error: () => {
-        this.customError.set('No se pudo crear el ejercicio');
-        this.creatingCustom.set(false);
-      },
-    });
   }
 
   removeExercise(index: number): void {
