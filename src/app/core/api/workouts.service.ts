@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Workout, WorkoutSet } from './models';
+import { ApiCacheService } from './api-cache.service';
 
 interface PaginatedWorkouts {
   data: Workout[];
@@ -41,6 +42,7 @@ export interface SetPayload {
 @Injectable({ providedIn: 'root' })
 export class WorkoutsService {
   private http = inject(HttpClient);
+  private cache = inject(ApiCacheService);
   private base = `${environment.apiUrl}/workouts`;
 
   getAll(): Observable<Workout[]> {
@@ -74,7 +76,9 @@ export class WorkoutsService {
   }
 
   addSet(workoutId: string, data: SetPayload): Observable<WorkoutSet> {
-    return this.http.post<WorkoutSet>(`${this.base}/${workoutId}/sets`, data);
+    return this.http
+      .post<WorkoutSet>(`${this.base}/${workoutId}/sets`, data)
+      .pipe(tap(() => this.cache.invalidate('records')));
   }
 
   updateSet(
