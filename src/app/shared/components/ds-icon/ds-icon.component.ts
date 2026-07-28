@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
+  // ponytail: host inline a propósito, va dentro de flujo de texto y de botones
   selector: 'ds-icon',
   standalone: true,
   imports: [CommonModule],

@@ -3,6 +3,7 @@ import { Component, Input } from '@angular/core';
 export type BadgeTone = 'neutral' | 'mint' | 'coral' | 'amber' | 'violet';
 
 @Component({
+  // ponytail: host inline a propósito, va dentro de flujo de texto
   selector: 'ds-badge',
   standalone: true,
   template: `<span class="ds-badge" [class]="'ds-badge--' + tone"><ng-content/></span>`,
