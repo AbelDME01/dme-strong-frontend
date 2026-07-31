@@ -55,14 +55,17 @@
     </div>
 
     <div class="workout__sets">
-      <div *ngFor="let s of currentSets()" class="workout__set workout__set--done">
-        <span class="workout__set-num">{{ s.set_number }}</span>
-        <span class="workout__set-weight">{{ s.weight_kg ?? '—' }}<span class="workout__unit">kg</span></span>
-        <span class="workout__set-reps">{{ s.reps ?? '—' }}</span>
-        <span class="workout__set-rpe" [style.color]="rpeColor(s.rpe)">{{ s.rpe ?? '—' }}</span>
-        <button class="workout__set-del" (click)="removeSet(s)">
-          <ds-icon name="trash" [size]="14" color="var(--dme-coral)"/>
-        </button>
+      <div *ngFor="let s of currentSets()" class="workout__set-row">
+        <div class="workout__set workout__set--done">
+          <span class="workout__set-num">{{ s.set_number }}</span>
+          <span class="workout__set-weight">{{ s.weight_kg ?? '—' }}<span class="workout__unit">kg</span></span>
+          <span class="workout__set-reps">{{ s.reps ?? '—' }}</span>
+          <span class="workout__set-rpe" [style.color]="rpeColor(s.rpe)">{{ s.rpe ?? '—' }}</span>
+          <button class="workout__set-del" (click)="removeSet(s)">
+            <ds-icon name="trash" [size]="14" color="var(--dme-coral)"/>
+          </button>
+        </div>
+        <div *ngIf="s.notes" class="workout__set-note">{{ s.notes }}</div>
       </div>
       <div *ngIf="currentSets().length === 0" class="workout__sets-empty">
         Sin series registradas todavía.
@@ -86,7 +89,20 @@
         <input type="number" min="1" max="10" inputmode="decimal"
                [ngModel]="rpe()" (ngModelChange)="rpe.set($event)"/>
       </label>
+      <button type="button" class="workout__note-toggle"
+              [class.workout__note-toggle--active]="noteVisible() || note().trim()"
+              (click)="toggleNote()"
+              [attr.aria-label]="'Añadir nota a la serie'"
+              [attr.aria-pressed]="noteVisible()">
+        <ds-icon name="note" [size]="18" color="var(--dme-text-dim)"/>
+      </button>
     </div>
+
+    <label *ngIf="noteVisible()" class="workout__note-field">
+      <textarea rows="2" maxlength="280"
+                placeholder="Nota de la serie (opcional)"
+                [ngModel]="note()" (ngModelChange)="note.set($event)"></textarea>
+    </label>
 
     <ds-button [full]="true" size="lg" icon="check"
                style="margin-top: 14px"
@@ -133,4 +149,14 @@
     [excludeIds]="sessionExerciseIds()"
     (selected)="addExercise($event)"
     (closed)="pickerOpen.set(false)"/>
+
+  <ds-modal
+    [open]="cancelModalOpen()"
+    title="¿Cancelar el entrenamiento?"
+    message="No se guardará ningún progreso."
+    confirmText="Cancelar entrenamiento"
+    cancelText="Seguir entrenando"
+    [danger]="true"
+    (confirmed)="confirmCancelWorkout()"
+    (cancelled)="cancelModalOpen.set(false)"/>
 </div>

@@ -85,7 +85,11 @@
 
     <!-- Workouts List -->
     <div class="history__list">
-      <div *ngFor="let w of workouts()" class="history__item-card" tabindex="0">
+      <div *ngFor="let w of workouts()" class="history__item-card" tabindex="0"
+           role="link" [attr.aria-label]="'Ver detalle de ' + w.name"
+           (click)="openWorkout(w.id)"
+           (keydown.enter)="openWorkout(w.id)"
+           (keydown.space)="openWorkout(w.id); $event.preventDefault()">
         <div class="history__item-header">
           <div class="history__date-badge">
             <div class="history__date-month">{{ w.month }}</div>

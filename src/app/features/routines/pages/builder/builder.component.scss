@@ -76,7 +76,12 @@
     font-size: 13px;
   }
 
-  &__name-section { margin-top: 22px; }
+  &__name-section {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
   &__input {
     width: 100%;
@@ -100,7 +105,6 @@
     font-weight: 600;
     letter-spacing: 0.2px;
     text-transform: uppercase;
-    margin-bottom: 8px;
   }
 
   &__name {

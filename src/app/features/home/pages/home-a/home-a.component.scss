@@ -139,11 +139,7 @@
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
 
-    ds-card {
-      display: block;
-
-      ::ng-deep .ds-card { height: 100%; }
-    }
+    ds-card ::ng-deep .ds-card { height: 100%; }
   }
 
   &__stat-label {

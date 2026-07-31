@@ -1,0 +1,157 @@
+<div class="workout">
+  <div class="workout__header">
+    <a routerLink="/history" class="workout__back" aria-label="Volver al historial">
+      <ds-icon name="chevronL" [size]="18" color="var(--dme-text)"/>
+    </a>
+    <div class="workout__title">{{ name() }}</div>
+    <div class="workout__header-spacer"></div>
+  </div>
+
+  <!-- Skeleton state -->
+  <div *ngIf="loading()" class="workout__skeleton">
+    <ds-skeleton height="14px" width="140px" radius="6px"/>
+    <ds-skeleton height="64px" radius="16px" style="margin-top: 16px"/>
+    <div *ngFor="let _ of [1,2]" style="margin-top: 18px">
+      <ds-skeleton height="14px" width="40%" radius="6px"/>
+      <ds-skeleton height="48px" radius="12px" style="margin-top: 10px"/>
+      <ds-skeleton height="48px" radius="12px" style="margin-top: 6px"/>
+    </div>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="!loading() && error()" class="workout__state workout__state--error" role="alert">
+    {{ error() }}
+  </div>
+
+  <!-- Loaded state -->
+  <ng-container *ngIf="!loading() && !error()">
+    <!-- Summary -->
+    <div class="workout__meta">{{ dateLabel() }}</div>
+    <div class="workout__stats">
+      <div class="workout__stat">
+        <div class="workout__stat-label">Volumen</div>
+        <div class="workout__stat-value">{{ volumeLabel() }}</div>
+      </div>
+      <div class="workout__stat">
+        <div class="workout__stat-label">Series</div>
+        <div class="workout__stat-value">{{ totalSets() }}</div>
+      </div>
+      <div class="workout__stat">
+        <div class="workout__stat-label">Duración</div>
+        <div class="workout__stat-value">{{ durationLabel() }}</div>
+      </div>
+    </div>
+
+    <div *ngIf="notes()" class="workout__notes">
+      <ds-icon name="note" [size]="15" color="var(--dme-text-dim)"/>
+      <span>{{ notes() }}</span>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="exerciseGroups().length === 0" class="workout__empty">
+      <div class="workout__empty-icon">
+        <ds-icon name="dumbbell" [size]="30" color="var(--dme-text-mute)"/>
+      </div>
+      <div class="workout__empty-title">Sin series</div>
+      <div class="workout__empty-sub">Este entrenamiento no tiene series registradas.</div>
+    </div>
+
+    <!-- Exercise groups -->
+    <div class="workout__groups">
+      <div *ngFor="let group of exerciseGroups()" class="workout__group">
+        <div class="workout__group-header">
+          <div class="workout__group-name">{{ group.name }}</div>
+          <div *ngIf="group.muscleGroup" class="workout__group-muscle">{{ group.muscleGroup }}</div>
+        </div>
+
+        <div *ngFor="let set of group.sets" class="workout__set">
+          <!-- Read mode -->
+          <ng-container *ngIf="editingSetId() !== set.id">
+            <div class="workout__set-main">
+              <span class="workout__set-num">{{ set.set_number }}</span>
+              <span class="workout__set-lift">{{ setLift(set) }}</span>
+              <span *ngIf="set.rpe != null" class="workout__set-rpe">RPE {{ set.rpe }}</span>
+              <div class="workout__set-actions">
+                <button type="button" class="workout__icon-btn"
+                        aria-label="Editar serie"
+                        (click)="startEdit(set)">
+                  <ds-icon name="edit" [size]="16" color="var(--dme-text-dim)"/>
+                </button>
+                <button *ngIf="confirmingSetId() !== set.id" type="button"
+                        class="workout__icon-btn"
+                        aria-label="Borrar serie"
+                        (click)="askDeleteSet(set)">
+                  <ds-icon name="trash" [size]="16" color="var(--dme-coral)"/>
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="set.notes" class="workout__set-note">{{ set.notes }}</div>
+
+            <!-- Inline delete confirmation -->
+            <div *ngIf="confirmingSetId() === set.id" class="workout__confirm">
+              <span class="workout__confirm-text">¿Borrar esta serie?</span>
+              <ds-button variant="danger" size="sm" [disabled]="saving()"
+                         (clicked)="confirmDeleteSet(set)">Sí, borrar</ds-button>
+              <ds-button variant="secondary" size="sm" [disabled]="saving()"
+                         (clicked)="cancelDeleteSet()">No</ds-button>
+            </div>
+          </ng-container>
+
+          <!-- Edit mode -->
+          <div *ngIf="editingSetId() === set.id" class="workout__edit">
+            <div class="workout__edit-fields">
+              <label class="workout__field">
+                <span class="workout__field-label">Peso (kg)</span>
+                <input class="workout__field-input" type="text" inputmode="decimal"
+                       [value]="draft().weightKg"
+                       (input)="patchDraft('weightKg', $any($event.target).value)"/>
+              </label>
+              <label class="workout__field">
+                <span class="workout__field-label">Reps</span>
+                <input class="workout__field-input" type="text" inputmode="numeric"
+                       [value]="draft().reps"
+                       (input)="patchDraft('reps', $any($event.target).value)"/>
+              </label>
+              <label class="workout__field">
+                <span class="workout__field-label">RPE</span>
+                <input class="workout__field-input" type="text" inputmode="decimal"
+                       [value]="draft().rpe"
+                       (input)="patchDraft('rpe', $any($event.target).value)"/>
+              </label>
+            </div>
+            <label class="workout__field workout__field--full">
+              <span class="workout__field-label">Nota</span>
+              <input class="workout__field-input" type="text"
+                     placeholder="Comentario opcional"
+                     [value]="draft().notes"
+                     (input)="patchDraft('notes', $any($event.target).value)"/>
+            </label>
+            <div class="workout__edit-actions">
+              <ds-button variant="primary" size="sm" [disabled]="saving()"
+                         (clicked)="saveEdit(set)">Guardar</ds-button>
+              <ds-button variant="secondary" size="sm" [disabled]="saving()"
+                         (clicked)="cancelEdit()">Cancelar</ds-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete whole session -->
+    <div class="workout__danger">
+      <ds-button *ngIf="!confirmingWorkoutDelete()" variant="danger" size="md" [full]="true"
+                 icon="trash" (clicked)="askDeleteWorkout()">Borrar entrenamiento</ds-button>
+
+      <div *ngIf="confirmingWorkoutDelete()" class="workout__confirm workout__confirm--session">
+        <span class="workout__confirm-text">¿Borrar todo el entrenamiento? Esta acción no se puede deshacer.</span>
+        <div class="workout__confirm-actions">
+          <ds-button variant="danger" size="md" [full]="true" [disabled]="saving()"
+                     (clicked)="confirmDeleteWorkout()">Sí, borrar</ds-button>
+          <ds-button variant="secondary" size="md" [full]="true" [disabled]="saving()"
+                     (clicked)="cancelDeleteWorkout()">Cancelar</ds-button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

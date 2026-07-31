@@ -8,6 +8,8 @@ import { Component, Input } from '@angular/core';
     [class.ds-card--interactive]="interactive"
     [style.padding.px]="pad"><ng-content/></div>`,
   styles: [`
+    :host { display: block; }
+
     .ds-card {
       background: var(--dme-surface);
       border: 1px solid var(--dme-border);

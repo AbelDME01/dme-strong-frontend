@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Routine } from './models';
+import { ApiCacheService } from './api-cache.service';
 
 /** Input shape for a routine exercise — camelCase to match the backend DTO. */
 export interface RoutineExerciseInput {
@@ -24,10 +26,13 @@ export interface RoutinePayload {
 @Injectable({ providedIn: 'root' })
 export class RoutinesService {
   private http = inject(HttpClient);
+  private cache = inject(ApiCacheService);
   private base = `${environment.apiUrl}/routines`;
 
   getAll(): Observable<Routine[]> {
-    return this.http.get<Routine[]>(this.base);
+    return this.cache.get('routines:all', () =>
+      this.http.get<Routine[]>(this.base),
+    );
   }
 
   getById(id: string): Observable<Routine> {
@@ -35,14 +40,20 @@ export class RoutinesService {
   }
 
   create(data: RoutinePayload): Observable<Routine> {
-    return this.http.post<Routine>(this.base, data);
+    return this.http
+      .post<Routine>(this.base, data)
+      .pipe(tap(() => this.cache.invalidate('routines')));
   }
 
   update(id: string, data: Partial<RoutinePayload>): Observable<Routine> {
-    return this.http.patch<Routine>(`${this.base}/${id}`, data);
+    return this.http
+      .patch<Routine>(`${this.base}/${id}`, data)
+      .pipe(tap(() => this.cache.invalidate('routines')));
   }
 
   remove(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.base}/${id}`);
+    return this.http
+      .delete<void>(`${this.base}/${id}`)
+      .pipe(tap(() => this.cache.invalidate('routines')));
   }
 }

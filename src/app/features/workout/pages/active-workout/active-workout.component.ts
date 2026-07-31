@@ -13,6 +13,7 @@ import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-bu
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
 import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
 import { ExercisePickerComponent } from '../../../../shared/components/exercise-picker/exercise-picker.component';
+import { DsModalComponent } from '../../../../shared/components/ds-modal/ds-modal.component';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { RoutinesService } from '../../../../core/api/routines.service';
 import { ExercisesService } from '../../../../core/api/exercises.service';
@@ -30,7 +31,7 @@ interface SessionExercise {
 @Component({
   selector: 'app-active-workout',
   standalone: true,
-  imports: [CommonModule, FormsModule, DsButtonComponent, DsIconComponent, DsSkeletonComponent, ExercisePickerComponent],
+  imports: [CommonModule, FormsModule, DsButtonComponent, DsIconComponent, DsSkeletonComponent, ExercisePickerComponent, DsModalComponent],
   templateUrl: './active-workout.component.html',
   styleUrl: './active-workout.component.scss',
 })
@@ -52,11 +53,14 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
   saving = signal(false);
   finishing = signal(false);
   cancelling = signal(false);
+  cancelModalOpen = signal(false);
 
   // Inputs for the next set being logged.
   weight = signal<number | null>(null);
   reps = signal<number | null>(null);
   rpe = signal<number | null>(null);
+  note = signal('');
+  noteVisible = signal(false);
 
   elapsed = signal('00:00');
   private timer?: ReturnType<typeof setInterval>;
@@ -231,6 +235,7 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
 
     this.saving.set(true);
     const setNumber = this.currentSets().length + 1;
+    const note = this.note().trim();
     this.workoutsService
       .addSet(id, {
         exerciseId: ex.exerciseId,
@@ -238,11 +243,15 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
         ...(this.reps() != null ? { reps: this.reps()! } : {}),
         ...(this.weight() != null ? { weightKg: this.weight()! } : {}),
         ...(this.rpe() != null ? { rpe: this.rpe()! } : {}),
+        ...(note ? { notes: note } : {}),
       })
       .subscribe({
         next: (created) => {
           // Mantener peso/reps/rpe rellenos: lo habitual es repetir valores entre series.
+          // La nota sí se limpia: es específica de cada serie.
           this.sets.update((list) => [...list, created]);
+          this.note.set('');
+          this.noteVisible.set(false);
           this.saving.set(false);
         },
         error: (err) => {
@@ -251,6 +260,10 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
           console.error(err);
         },
       });
+  }
+
+  toggleNote(): void {
+    this.noteVisible.update((visible) => !visible);
   }
 
   removeSet(set: WorkoutSet): void {
@@ -287,10 +300,14 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
   }
 
   cancelWorkout(): void {
+    if (this.cancelling()) return;
+    this.cancelModalOpen.set(true);
+  }
+
+  confirmCancelWorkout(): void {
     const id = this.workoutId();
+    this.cancelModalOpen.set(false);
     if (!id || this.cancelling()) return;
-    const confirmed = confirm('¿Cancelar el entrenamiento? No se guardará ningún progreso.');
-    if (!confirmed) return;
     this.cancelling.set(true);
     this.workoutsService.remove(id).subscribe({
       next: () => {
