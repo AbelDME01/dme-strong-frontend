@@ -1,17 +1,23 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../supabase.client';
+import { ApiCacheService } from '../api/api-cache.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private cache = inject(ApiCacheService);
+
   readonly session = signal<Session | null>(null);
   readonly user = signal<User | null>(null);
   readonly isAuthenticated = computed(() => this.session() !== null);
 
   constructor() {
-    supabase.auth.onAuthStateChange((_event, session) => {
+    supabase.auth.onAuthStateChange((event, session) => {
       this.session.set(session);
       this.user.set(session?.user ?? null);
+      if (event === 'SIGNED_OUT') {
+        this.cache.clear();
+      }
     });
   }
 
