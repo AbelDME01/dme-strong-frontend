@@ -1,0 +1,57 @@
+<div class="picker" (click)="closed.emit()">
+  <div class="picker__sheet" (click)="$event.stopPropagation()">
+    <div class="picker__handle"></div>
+    <div class="picker__search">
+      <ds-icon name="search" [size]="18" color="var(--dme-text-dim)"/>
+      <input type="text" placeholder="Buscar ejercicio"
+             [ngModel]="query()"
+             (ngModelChange)="query.set($event)"/>
+    </div>
+    <div class="picker__list">
+      <div *ngFor="let ex of filteredCatalog()"
+           class="picker__item"
+           (click)="select(ex)">
+        <div class="picker__item-icon">
+          <ds-icon name="dumbbell" [size]="18" color="var(--dme-mint)"/>
+        </div>
+        <div class="picker__item-info">
+          <div class="picker__item-name">{{ ex.name }}</div>
+          <div class="picker__item-meta">{{ ex.muscle_group }}</div>
+        </div>
+        <ds-icon name="plus" [size]="16" color="var(--dme-mint)"/>
+      </div>
+      <div *ngIf="filteredCatalog().length === 0 && !customFormOpen()" class="picker__empty">
+        <p>No hay ejercicios que coincidan.</p>
+        <div class="picker__create-hint" (click)="openCustomForm()">
+          <ds-icon name="plus" [size]="16" color="var(--dme-mint)"/>
+          <span>Crear "{{ query() || 'nuevo ejercicio' }}"</span>
+        </div>
+      </div>
+
+      <!-- Custom exercise quick-create form -->
+      <div *ngIf="customFormOpen()" class="picker__custom-form">
+        <div class="picker__custom-title">Nuevo ejercicio</div>
+        <label class="picker__custom-label">
+          <span>Nombre</span>
+          <input type="text" placeholder="Ej. Curl predicador"
+                 [ngModel]="customName()" (ngModelChange)="customName.set($event)"/>
+        </label>
+        <label class="picker__custom-label">
+          <span>Grupo muscular</span>
+          <select [ngModel]="customMuscleGroup()" (ngModelChange)="customMuscleGroup.set($event)">
+            <option *ngFor="let opt of muscleGroupOptions" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+        </label>
+        <div *ngIf="customError()" class="picker__custom-error">{{ customError() }}</div>
+        <div class="picker__custom-actions">
+          <button class="picker__custom-cancel" (click)="closeCustomForm()">Cancelar</button>
+          <button class="picker__custom-save"
+                  [disabled]="!customName().trim() || creatingCustom()"
+                  (click)="createCustomExercise()">
+            {{ creatingCustom() ? 'Creando…' : 'Crear y añadir' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

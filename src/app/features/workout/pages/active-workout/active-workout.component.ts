@@ -12,10 +12,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
 import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
+import { ExercisePickerComponent } from '../../../../shared/components/exercise-picker/exercise-picker.component';
 import { DsModalComponent } from '../../../../shared/components/ds-modal/ds-modal.component';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { RoutinesService } from '../../../../core/api/routines.service';
-import { Workout, WorkoutSet } from '../../../../core/api/models';
+import { ExercisesService } from '../../../../core/api/exercises.service';
+import { Exercise, Workout, WorkoutSet } from '../../../../core/api/models';
 
 /** A single exercise within the active session, with its target. */
 interface SessionExercise {
@@ -29,13 +31,14 @@ interface SessionExercise {
 @Component({
   selector: 'app-active-workout',
   standalone: true,
-  imports: [CommonModule, FormsModule, DsButtonComponent, DsIconComponent, DsSkeletonComponent, DsModalComponent],
+  imports: [CommonModule, FormsModule, DsButtonComponent, DsIconComponent, DsSkeletonComponent, ExercisePickerComponent, DsModalComponent],
   templateUrl: './active-workout.component.html',
   styleUrl: './active-workout.component.scss',
 })
 export class ActiveWorkoutComponent implements OnInit, OnDestroy {
   private workoutsService = inject(WorkoutsService);
   private routinesService = inject(RoutinesService);
+  private exercisesService = inject(ExercisesService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -61,6 +64,12 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
 
   elapsed = signal('00:00');
   private timer?: ReturnType<typeof setInterval>;
+
+  // Picker to add exercises (catalog or custom) mid-session.
+  pickerOpen = signal(false);
+  catalog = signal<Exercise[]>([]);
+  loadingCatalog = signal(false);
+  sessionExerciseIds = computed(() => this.exercises().map((e) => e.exerciseId));
 
   currentExercise = computed<SessionExercise | null>(
     () => this.exercises()[this.currentIndex()] ?? null,
@@ -174,6 +183,48 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
     if (this.currentIndex() < this.exercises().length - 1) {
       this.currentIndex.update((i) => i + 1);
     }
+  }
+
+  openPicker(): void {
+    if (this.loadingCatalog()) return;
+    if (this.catalog().length > 0) {
+      this.pickerOpen.set(true);
+      return;
+    }
+    // El catálogo se carga una sola vez, al abrir el picker por primera vez.
+    this.loadingCatalog.set(true);
+    this.exercisesService.getAll().subscribe({
+      next: (data) => {
+        this.catalog.set(data);
+        this.loadingCatalog.set(false);
+        this.pickerOpen.set(true);
+      },
+      error: (err) => {
+        this.loadingCatalog.set(false);
+        this.error.set('No se pudo cargar el catálogo de ejercicios');
+        console.error(err);
+      },
+    });
+  }
+
+  addExercise(exercise: Exercise): void {
+    this.pickerOpen.set(false);
+    const existing = this.exercises().findIndex((e) => e.exerciseId === exercise.id);
+    if (existing >= 0) {
+      this.currentIndex.set(existing);
+      return;
+    }
+    this.exercises.update((list) => [
+      ...list,
+      {
+        exerciseId: exercise.id,
+        name: exercise.name,
+        muscleGroup: exercise.muscle_group,
+        targetSets: null,
+        targetReps: null,
+      },
+    ]);
+    this.currentIndex.set(this.exercises().length - 1);
   }
 
   completeSet(): void {

@@ -111,6 +111,13 @@
       {{ saving() ? 'Guardando…' : 'Completar serie' }}
     </ds-button>
 
+    <ds-button [full]="true" size="lg" variant="soft" icon="plus"
+               style="margin-top: 10px"
+               [disabled]="loadingCatalog()"
+               (clicked)="openPicker()">
+      {{ loadingCatalog() ? 'Cargando ejercicios…' : 'Añadir ejercicio' }}
+    </ds-button>
+
     <ds-button [full]="true" size="lg" variant="secondary"
                style="margin-top: 10px"
                [disabled]="finishing()"
@@ -128,7 +135,20 @@
 
   <div *ngIf="!loading() && exercises().length === 0 && !error()" class="workout__state">
     Este entrenamiento no tiene ejercicios.
+    <ds-button [full]="true" size="lg" variant="soft" icon="plus"
+               style="margin-top: 14px"
+               [disabled]="loadingCatalog()"
+               (clicked)="openPicker()">
+      {{ loadingCatalog() ? 'Cargando ejercicios…' : 'Añadir ejercicio' }}
+    </ds-button>
   </div>
+
+  <app-exercise-picker
+    *ngIf="pickerOpen()"
+    [catalog]="catalog()"
+    [excludeIds]="sessionExerciseIds()"
+    (selected)="addExercise($event)"
+    (closed)="pickerOpen.set(false)"/>
 
   <ds-modal
     [open]="cancelModalOpen()"
