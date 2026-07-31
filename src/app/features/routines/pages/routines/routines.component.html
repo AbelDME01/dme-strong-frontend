@@ -77,4 +77,14 @@
       </div>
     </ds-card>
   </div>
+
+  <ds-modal
+    [open]="routinePendingDeletion() !== null"
+    title="Eliminar rutina"
+    [message]="deleteModalMessage()"
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    [danger]="true"
+    (confirmed)="confirmDeleteRoutine()"
+    (cancelled)="routinePendingDeletion.set(null)"/>
 </div>

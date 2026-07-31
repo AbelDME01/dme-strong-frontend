@@ -113,4 +113,14 @@
   <div *ngIf="!loading() && exercises().length === 0 && !error()" class="workout__state">
     Este entrenamiento no tiene ejercicios.
   </div>
+
+  <ds-modal
+    [open]="cancelModalOpen()"
+    title="¿Cancelar el entrenamiento?"
+    message="No se guardará ningún progreso."
+    confirmText="Cancelar entrenamiento"
+    cancelText="Seguir entrenando"
+    [danger]="true"
+    (confirmed)="confirmCancelWorkout()"
+    (cancelled)="cancelModalOpen.set(false)"/>
 </div>

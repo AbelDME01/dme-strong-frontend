@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DsButtonComponent } from '../../../../shared/components/ds-button/ds-button.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
 import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
+import { DsModalComponent } from '../../../../shared/components/ds-modal/ds-modal.component';
 import { WorkoutsService } from '../../../../core/api/workouts.service';
 import { RoutinesService } from '../../../../core/api/routines.service';
 import { Workout, WorkoutSet } from '../../../../core/api/models';
@@ -28,7 +29,7 @@ interface SessionExercise {
 @Component({
   selector: 'app-active-workout',
   standalone: true,
-  imports: [CommonModule, FormsModule, DsButtonComponent, DsIconComponent, DsSkeletonComponent],
+  imports: [CommonModule, FormsModule, DsButtonComponent, DsIconComponent, DsSkeletonComponent, DsModalComponent],
   templateUrl: './active-workout.component.html',
   styleUrl: './active-workout.component.scss',
 })
@@ -49,6 +50,7 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
   saving = signal(false);
   finishing = signal(false);
   cancelling = signal(false);
+  cancelModalOpen = signal(false);
 
   // Inputs for the next set being logged.
   weight = signal<number | null>(null);
@@ -236,10 +238,14 @@ export class ActiveWorkoutComponent implements OnInit, OnDestroy {
   }
 
   cancelWorkout(): void {
+    if (this.cancelling()) return;
+    this.cancelModalOpen.set(true);
+  }
+
+  confirmCancelWorkout(): void {
     const id = this.workoutId();
+    this.cancelModalOpen.set(false);
     if (!id || this.cancelling()) return;
-    const confirmed = confirm('¿Cancelar el entrenamiento? No se guardará ningún progreso.');
-    if (!confirmed) return;
     this.cancelling.set(true);
     this.workoutsService.remove(id).subscribe({
       next: () => {
