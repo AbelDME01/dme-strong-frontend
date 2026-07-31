@@ -35,6 +35,7 @@ export const routes: Routes = [
         children: [
           { path: '',             loadComponent: () => import('./features/history/pages/history/history.component').then(m => m.HistoryComponent) },
           { path: 'exercise/:id', data: { hideTabBar: true }, loadComponent: () => import('./features/history/pages/exercise-detail/exercise-detail.component').then(m => m.ExerciseDetailComponent) },
+          { path: 'workout/:id',  data: { hideTabBar: true }, loadComponent: () => import('./features/history/pages/workout-detail/workout-detail.component').then(m => m.WorkoutDetailComponent) },
         ],
       },
       {

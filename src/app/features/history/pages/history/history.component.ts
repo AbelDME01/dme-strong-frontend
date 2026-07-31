@@ -1,5 +1,6 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { DsCardComponent } from '../../../../shared/components/ds-card/ds-card.component';
 import { DsIconComponent } from '../../../../shared/components/ds-icon/ds-icon.component';
 import { DsSkeletonComponent } from '../../../../shared/components/ds-skeleton/ds-skeleton.component';
@@ -13,6 +14,7 @@ interface ExerciseRow {
 }
 
 interface WorkoutRow {
+  id: string;
   date: string;
   day: number;
   month: string;
@@ -34,6 +36,7 @@ interface WorkoutRow {
 })
 export class HistoryComponent implements OnInit {
   private workoutsService = inject(WorkoutsService);
+  private router = inject(Router);
 
   rawWorkouts = signal<Workout[]>([]);
   loading = signal(false);
@@ -128,7 +131,7 @@ export class HistoryComponent implements OnInit {
     const dur = w.duration_seconds ? `${Math.round(w.duration_seconds / 60)}min` : '—';
     const vol = this.computeVolume(w);
     const exercises = this.toExerciseRows(w.workout_sets ?? []);
-    return { date: dateLabel, day, month, time, name: w.name, vol, sets, dur, prs: 0, exercises };
+    return { id: w.id, date: dateLabel, day, month, time, name: w.name, vol, sets, dur, prs: 0, exercises };
   }
 
   /** Groups the workout sets by exercise, preserving set order within each one. */
@@ -174,6 +177,10 @@ export class HistoryComponent implements OnInit {
     if (diff === 1) return 'Ayer';
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     return days[date.getDay()];
+  }
+
+  openWorkout(id: string): void {
+    this.router.navigate(['/history/workout', id]);
   }
 
   barHeight(val: number): string {
