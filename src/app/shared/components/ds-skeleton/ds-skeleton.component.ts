@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `<div class="ds-skeleton" [style.width]="width" [style.height]="height" [style.border-radius]="radius"></div>`,
   styles: [`
+    :host { display: block; }
+
     .ds-skeleton {
       background: linear-gradient(
         90deg,

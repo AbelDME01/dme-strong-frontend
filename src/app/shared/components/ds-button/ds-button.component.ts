@@ -22,6 +22,8 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
     </button>
   `,
   styles: [`
+    :host { display: block; }
+
     .ds-btn {
       display: inline-flex;
       align-items: center;

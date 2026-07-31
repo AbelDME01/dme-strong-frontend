@@ -36,6 +36,8 @@ import { DsIconComponent } from '../ds-icon/ds-icon.component';
     </div>
   `,
   styles: [`
+    :host { display: block; }
+
     .ds-input-wrap { width: 100%; }
     .ds-input-label {
       font-size: 12px;
