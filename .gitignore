@@ -37,6 +37,29 @@ yarn-error.log
 testem.log
 /typings
 
+# Environment variables - NEVER commit these
+.env
+.env.*
+.env.local
+.env.example
+
+# Entornos con claves reales. Los environment.ts versionados llevan solo
+# claves anon (públicas por diseño); este apunta al Supabase de staging y se
+# mantiene fuera del repo. Sin él falla `ng build --configuration staging`.
+src/environments/environment.staging.ts
+
+# Keys / certs
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+
+# Firebase: caché de despliegue local (.firebaserc y firebase.json sí se
+# versionan: solo llevan el nombre del proyecto y la config de hosting)
+.firebase/
+
 # System files
 .DS_Store
 Thumbs.db
